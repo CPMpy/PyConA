@@ -1,0 +1,17 @@
+
+*.xml
+*.iml
+.idea/
+*.pyc
+pycona.egg-info/dependency_links.txt
+pycona.egg-info/PKG-INFO
+pycona.egg-info/requires.txt
+pycona.egg-info/SOURCES.txt
+pycona.egg-info/top_level.txt
+notebooks/.ipynb_checkpoints/Comparing different methods-checkpoint.ipynb
+notebooks/.ipynb_checkpoints/CP24 Tutorial Demo-checkpoint.ipynb
+notebooks/.ipynb_checkpoints/introductory_example-checkpoint.ipynb
+notebooks/.ipynb_checkpoints/Prediction-based CA system-checkpoint.ipynb
+dist/pycona-0.2.4-py3-none-any.whl
+dist/pycona-0.2.4.tar.gz
+notebooks/.ipynb_checkpoints/Comparing different algorithms and methods-checkpoint.ipynb
