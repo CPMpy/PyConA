@@ -1,7 +1,9 @@
 In this folder, we have introductory notebooks that 
 can help getting a first look to different aspects of PyConA.
 
-**introductory_example**: In this notebook, you can find an introduction to the basics of PyConA; how to create a problem instance for interactive CA and run an algorithm of choice.
+**introductory_example** <a target="_blank" href="https://colab.research.google.com/github/CPMpy/PyConA/blob/main/notebooks/introductory_example.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>: In this notebook, you can find an introduction to the basics of PyConA; how to create a problem instance for interactive CA and run an algorithm of choice.
 
 **Comparing different algorithms and methods**: In this notebook, a more detailed view is given on how to customize the CA environment used, to use different methods from the literature, while different algorithms are compared in a simple example
 
