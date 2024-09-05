@@ -35,10 +35,9 @@ The repository has implemented various approaches and methods from the literatur
 
 #### Clone and Install from this Repo
 
-Download PyConA from the GitHub repository and install it as follows:
+You can install pycona through pip
 ```commandline
-git clone -b main --depth 1 https://github.com/PyConA/PyConA.git
-pip install PyConA.
+pip install pycona
 ```
 
 ### Basics
@@ -50,7 +49,12 @@ The core of PyConA is the CA system (CASystem class). A CASystem can be run on a
 
 ### Basic Tutorials
 
-Coming very soon
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CPMpy/PyConA/blob/main/notebooks/introductory_example.ipynb)**Introductory Example**
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CPMpy/PyConA/blob/main/notebooks/Comparing%20different%20algorithms%20and%20methods.ipynb)**Comparing different algorithms and methods**
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CPMpy/PyConA/blob/main/notebooks/Prediction-based%20CA%20system.ipynb)**Prediction-based CA system**
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CPMpy/PyConA/blob/main/notebooks/CP24%20Tutorial%20Demo.ipynb)**CP24 Tutorial Demo**
+
+
 ### Documentation
 
 Coming soon
