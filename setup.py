@@ -27,15 +27,16 @@ setup(
     description='A cpmpy-based library for constraint acquisition.',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Dimosts/",
+    url="https://github.com/CPMpy/PyConA",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
         'cpmpy>=0.9',
+        'scikit-learn',
     ],
     #extra dependencies.
     extras_require={
-        "FULL":  ["scikit-learn", "networkx"],
+        "FULL":  ["networkx"],
     },
     classifiers=[
         "Programming Language :: Python :: 3 :: Only",
