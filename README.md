@@ -1,3 +1,8 @@
+![Github Version](https://img.shields.io/github/v/release/CPMpy/pycona?label=Github%20Release&logo=github)
+![PyPI version](https://img.shields.io/pypi/v/pycona?color=blue&label=Pypi%20version&logo=pypi&logoColor=white)
+![PyPI downloads](https://img.shields.io/pypi/dm/pycona?label=Pypi%20Downloads&logo=pypi&logoColor=white)
+![Licence](https://img.shields.io/github/license/CPMpy/cpmpy?label=Licence)
+
 ## PyConA: Constraint Acquisition in Python
 
 PyConA ([https://github.com/PyConA/pycona](https://github.com/PyConA/pycona)) is a python-based, open-source package for Constraint Acquisition (CA). In CA, **the goal is to assist the user in modeling**  Constraint Programming (CP) problems, by learning the constraints through user interaction.
