@@ -5,7 +5,7 @@
 
 ## PyConA: Constraint Acquisition in Python
 
-PyConA ([https://github.com/CPMpy/pycona](https://github.com/CPMpy/pycona)) is a python-based, open-source package for Constraint Acquisition (CA). In CA, **the goal is to assist the user in modeling**  Constraint Programming (CP) problems, by learning the constraints through user interaction.
+PyConA ([https://github.com/CPMpy/PyConA](https://github.com/CPMpy/PyConA)) is a python-based, open-source package for Constraint Acquisition (CA). In CA, **the goal is to assist the user in modeling**  Constraint Programming (CP) problems, by learning the constraints through user interaction.
 
 PyConA is based on the powerful CPMpy Constraint Programming and Modeling library in python (https://github.com/CPMpy/cpmpy), which is used for modeling the constraint problems.
 
