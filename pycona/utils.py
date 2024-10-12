@@ -9,6 +9,7 @@ import numpy as np
 import re
 from cpmpy.expressions.utils import all_pairs, is_any_list
 
+
 class Objectives:
     """
     A class to manage different objectives for query generation, find scope, and find constraint.
@@ -54,6 +55,7 @@ def check_value(c):
     """
     return bool(c.value())
 
+
 def get_con_subset(B, Y):
     """
     Get the subset of constraints whose scope is a subset of Y.
@@ -77,6 +79,7 @@ def get_kappa(B, Y):
     Y = frozenset(Y)
     return [c for c in B if frozenset(get_scope(c)).issubset(Y) and check_value(c) is False]
 
+
 def get_lambda(B, Y):
     """
     Get the subset of constraints whose scope is a subset of Y and are satisfied.
@@ -88,6 +91,7 @@ def get_lambda(B, Y):
     Y = frozenset(Y)
     return [c for c in B if frozenset(get_scope(c)).issubset(Y) and check_value(c) is True]
 
+
 def gen_pairwise(v1, v2):
     """
     Generate pairwise constraints between two variables.
@@ -97,6 +101,7 @@ def gen_pairwise(v1, v2):
     :return: List of pairwise constraints.
     """
     return [v1 == v2, v1 != v2, v1 < v2, v1 > v2]
+
 
 def gen_pairwise_ineq(v1, v2):
     """
@@ -108,6 +113,7 @@ def gen_pairwise_ineq(v1, v2):
     """
     return [v1 != v2]
 
+
 def alldiff_binary(grid):
     """
     Generate all different binary constraints for a grid.
@@ -118,6 +124,7 @@ def alldiff_binary(grid):
     for v1, v2 in all_pairs(grid):
         for c in gen_pairwise_ineq(v1, v2):
             yield c
+
 
 def gen_scoped_cons(grid):
     """
@@ -145,6 +152,7 @@ def gen_scoped_cons(grid):
                         for c in gen_pairwise_ineq(grid[i1, j1], grid[i2, j2]):
                             yield c
 
+
 def gen_all_cons(grid):
     """
     Generate all pairwise constraints for a grid.
@@ -156,6 +164,7 @@ def gen_all_cons(grid):
         for c in gen_pairwise(v1, v2):
             yield c
 
+
 def get_scopes_vars(C):
     """
     Get the set of variables involved in the scopes of constraints.
@@ -164,6 +173,7 @@ def get_scopes_vars(C):
     :return: Set of variables involved in the scopes of constraints.
     """
     return set([x for scope in [get_scope(c) for c in C] for x in scope])
+
 
 def get_scopes(C):
     """
@@ -174,6 +184,7 @@ def get_scopes(C):
     """
     return list(set([tuple(get_scope(c)) for c in C]))
 
+
 def get_scope(constraint):
     """
     Get the scope (variables) of a constraint.
@@ -181,18 +192,18 @@ def get_scope(constraint):
     :param constraint: The constraint to get the scope of.
     :return: List of variables in the scope of the constraint.
     """
-    if isinstance(constraint, _NumVarImpl):
-        return [constraint]
-    elif isinstance(constraint, Expression):
-        all_variables = []
-        for argument in constraint.args:
-            if isinstance(argument, _NumVarImpl):
-                all_variables.append(argument)
-            else:
-                all_variables.extend(get_scope(argument))
-        return all_variables
-    else:
-        return []
+
+    def collect_variables(item, variables):
+        if isinstance(item, _NumVarImpl):
+            variables.append(item)
+        elif isinstance(item, Expression) or is_any_list(item):
+            for arg in (item.args if isinstance(item, Expression) else item):
+                collect_variables(arg, variables)
+
+    all_variables = []
+    collect_variables(constraint, all_variables)
+    return all_variables
+
 
 def get_constant(constraint):
     """
@@ -212,6 +223,7 @@ def get_constant(constraint):
     else:
         return [constraint]
 
+
 def get_arity(constraint):
     """
     Get the arity (number of variables) of a constraint.
@@ -220,6 +232,7 @@ def get_arity(constraint):
     :return: The arity of the constraint.
     """
     return len(get_scope(constraint))
+
 
 def get_min_arity(C):
     """
@@ -232,6 +245,7 @@ def get_min_arity(C):
         return min([get_arity(c) for c in C])
     return 0
 
+
 def get_max_arity(C):
     """
     Get the maximum arity of a list of constraints.
@@ -242,6 +256,7 @@ def get_max_arity(C):
     if len(C) > 0:
         return max([get_arity(c) for c in C])
     return 0
+
 
 def get_relation(c, gamma):
     """
@@ -268,6 +283,7 @@ def get_relation(c, gamma):
             return i
 
     return -1
+
 
 def replace_variables(constraint, var_mapping):
     """
@@ -306,6 +322,7 @@ def get_var_name(var):
     name = var.name.replace(name[0], '')
     return name
 
+
 def get_var_ndims(var):
     """
     Get the number of dimensions of a variable.
@@ -317,6 +334,7 @@ def get_var_ndims(var):
     dims_str = "".join(dims)
     ndims = len(re.split(",", dims_str))
     return ndims
+
 
 def get_var_dims(var):
     """
@@ -331,6 +349,7 @@ def get_var_dims(var):
     dims = [int(dim) for dim in re.split(",", dims)]
     return dims
 
+
 def get_divisors(n):
     """
     Get the divisors of a number.
@@ -343,6 +362,7 @@ def get_divisors(n):
         if n % i == 0:
             divisors.append(i)
     return divisors
+
 
 def average_difference(values):
     """
@@ -375,6 +395,7 @@ def compute_sample_weights(Y):
 
     return sw
 
+
 def get_variables_from_constraints(constraints):
     """
     Get the list of variables involved in a list of constraints.
@@ -382,6 +403,7 @@ def get_variables_from_constraints(constraints):
     :param constraints: List of constraints.
     :return: List of variables involved in the constraints.
     """
+
     def get_variables(expr):
         if isinstance(expr, _NumVarImpl):
             return [expr]
@@ -403,6 +425,7 @@ def get_variables_from_constraints(constraints):
     variable_list = sorted(variable_set, key=extract_nums)
     return variable_list
 
+
 def combine_sets_distinct(set1, set2):
     """
     Combine two sets into a set of distinct pairs.
@@ -421,6 +444,7 @@ def combine_sets_distinct(set1, set2):
                 result.add(tuple(sorted((a, b))))
     return result
 
+
 def unravel(lst, newlist):
     """
     Recursively unravel nested lists, tuples, or arrays into a flat list.
@@ -437,6 +461,7 @@ def unravel(lst, newlist):
         elif isinstance(e, (list, tuple, np.flatiter, np.ndarray)):
             unravel(e, newlist)
 
+
 def get_combinations(lst, n):
     """
     Get all combinations of a list of a given length.
@@ -450,6 +475,7 @@ def get_combinations(lst, n):
         unravel(lst, newlist)
         lst = newlist
     return list(combinations(lst, n))
+
 
 def restore_scope_values(scope, scope_values):
     """
