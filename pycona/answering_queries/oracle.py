@@ -70,3 +70,6 @@ class Oracle(ABC):
         :param verbose: The verbosity level to be set.
         """
         self._verbose = verbose
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}"
