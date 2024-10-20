@@ -30,4 +30,4 @@ class TestFindScope:
             ca_env.init_state(oracle=ca.ConstraintOracle(oracle_model.constraints), instance=instance, verbose=1)
             Y = ca_env.run_find_scope([a, b, c, d])
 
-            assert Y == get_variables(findscope)
+            assert Y == get_variables(constraints[c])
