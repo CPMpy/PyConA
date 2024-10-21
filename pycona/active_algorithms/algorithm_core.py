@@ -48,3 +48,6 @@ class AlgorithmCAInteractive(ABC):
         :param env: The constraint acquisition environment.
         """
         self._env = env
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}"
