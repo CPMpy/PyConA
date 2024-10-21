@@ -4,6 +4,7 @@ from itertools import combinations
 import cpmpy as cp
 from cpmpy.expressions.core import Expression, Comparison, Operator
 from cpmpy.expressions.variables import NDVarArray, _NumVarImpl, NegBoolView
+from cpmpy.transformations.get_variables import get_variables
 from sklearn.utils import class_weight
 import numpy as np
 import re
@@ -192,17 +193,7 @@ def get_scope(constraint):
     :param constraint: The constraint to get the scope of.
     :return: List of variables in the scope of the constraint.
     """
-
-    def collect_variables(item, variables):
-        if isinstance(item, _NumVarImpl):
-            variables.append(item)
-        elif isinstance(item, Expression) or is_any_list(item):
-            for arg in (item.args if isinstance(item, Expression) else item):
-                collect_variables(arg, variables)
-
-    all_variables = []
-    collect_variables(constraint, all_variables)
-    return all_variables
+    return get_variables(constraint)
 
 
 def get_constant(constraint):
