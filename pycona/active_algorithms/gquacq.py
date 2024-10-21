@@ -1,4 +1,5 @@
 import time
+import cpmpy as cp
 
 import networkx as nx
 from cpmpy.transformations.get_variables import get_variables
@@ -117,7 +118,7 @@ class GQuAcq(AlgorithmCAInteractive):
                 # if potentially generalizing leads to unsat, continue to next
                 new_CL = self.env.instance.cl.copy()
                 new_CL += B
-                if new_CL.solve() and self.env.ask_generalization_query(r, B):
+                if cp.Model(new_CL).solve() and self.env.ask_generalization_query(r, B):
                     gen_flag = True
                     self.env.add_to_cl(B)
                 else:
