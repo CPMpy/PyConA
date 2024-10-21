@@ -396,17 +396,6 @@ def get_variables_from_constraints(constraints):
     :return: List of variables involved in the constraints.
     """
 
-    def get_variables(expr):
-        if isinstance(expr, _NumVarImpl):
-            return [expr]
-        elif isinstance(expr, np.bool_):
-            return []
-        elif isinstance(expr, np.int_) or isinstance(expr, int):
-            return []
-        else:
-            # Recursively find variables in all arguments of the expression
-            return [var for argument in expr.args for var in get_variables(argument)]
-
     # Create set to hold unique variables
     variable_set = set()
     for constraint in constraints:
