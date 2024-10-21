@@ -212,11 +212,12 @@ def get_constant(constraint):
     :param constraint: The constraint to get the constants of.
     :return: List of constants involved in the constraint.
     """
+
     if isinstance(constraint, _NumVarImpl):
         return []
-    elif isinstance(constraint, Expression):
+    elif isinstance(constraint, Expression) or is_any_list(constraint):
         constants = []
-        for argument in constraint.args:
+        for argument in (constraint.args if isinstance(constraint, Expression) else constraint):
             if not isinstance(argument, _NumVarImpl):
                 constants.extend(get_constant(argument))
         return constants
