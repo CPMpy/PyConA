@@ -58,7 +58,7 @@ class ConstraintOracle(Oracle):
         :return: A boolean indicating if the recommended constraint is in the set of constraints.
         """
         # Check if the recommended constraint is in the set of constraints
-        return c in self.constraints
+        return c in set(self.constraints)
 
     def answer_generalization_query(self, C):
         """
