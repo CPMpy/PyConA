@@ -46,7 +46,6 @@ class ConstraintOracle(Oracle):
 
         # Need the oracle to answer based only on the constraints with a scope that is a subset of Y
         suboracle = get_con_subset(self.constraints, Y)
-
         # Check if at least one constraint is violated or not
         return all([check_value(c) for c in suboracle])
 
@@ -58,7 +57,7 @@ class ConstraintOracle(Oracle):
         :return: A boolean indicating if the recommended constraint is in the set of constraints.
         """
         # Check if the recommended constraint is in the set of constraints
-        return c in set(self.constraints)
+        return c in self.constraints
 
     def answer_generalization_query(self, C):
         """
