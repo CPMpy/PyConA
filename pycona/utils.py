@@ -194,6 +194,17 @@ def get_scope(constraint):
     :return: List of variables in the scope of the constraint.
     """
     return get_variables(constraint)
+        
+        
+def compare_scopes(scope1, scope2):
+
+    scope1 = set(scope1)
+    scope2 = set(scope2)
+
+    if len(scope1) != len(scope2):
+        return False
+
+    return all(v in scope2 for v in scope1)
 
 
 def get_constant(constraint):

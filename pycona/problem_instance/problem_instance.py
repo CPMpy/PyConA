@@ -41,11 +41,11 @@ class ProblemInstance:
         self._visualize = visualize if visualize is not None else print
 
         if not is_any_list(self._cl) or \
-           not all(isinstance(c, Expression) for c in self._cl):
+                not all(isinstance(c, Expression) for c in self._cl):
             raise TypeError(f"'constraints' argument in ProblemInstance should be a list of Constraint objects: "
                             f"{self._cl}")
         if not isinstance(self._variables, NDVarArray) and \
-           not (is_any_list(self._variables) and all(isinstance(v, _NumVarImpl) for v in list(self._variables))):
+                not (is_any_list(self._variables) and all(isinstance(v, _NumVarImpl) for v in list(self._variables))):
             raise TypeError(f"'variables' argument in ProblemInstance should be a list of Variable objects: "
                             f"{type(self._variables)}")
         if not isinstance(self._params, dict):
@@ -247,19 +247,19 @@ class ProblemInstance:
 
         :param v1: The variable for which to construct the bias.
         """
-        
+
         all_cons = []
         X = list(set(self.X) - {v1})
 
         for relation in self.language:
             abs_vars = get_scope(relation)
 
-            combs = combinations(X, len(abs_vars)-1)
+            combs = combinations(X, len(abs_vars) - 1)
 
             for comb in combs:
                 replace_dict = {abs_vars[0]: v1}
                 for i, v in enumerate(comb):
-                    replace_dict[abs_vars[i+1]] = v
+                    replace_dict[abs_vars[i + 1]] = v
                 constraint = replace_variables(relation, replace_dict)
                 all_cons.append(constraint)
 
@@ -283,6 +283,9 @@ class ProblemInstance:
         if self.language is not None:
             parts.append(f"\nLanguage: {self.language}.")
         return "\n".join(parts)
+
+    def __repr__(self):
+        return self.name
 
     def copy(self):
         """
