@@ -14,6 +14,7 @@ class FindC2(FindCBase):
 
     This function works also for non-normalised target networks!
     """
+
     # TODO optimize to work better (probably only needs to make better the generate_find_query2)
 
     def __init__(self, ca_system: ActiveCAEnv = None, time_limit=0.2, findscope=None):
@@ -90,7 +91,7 @@ class FindC2(FindCBase):
 
                 kappaD = [c for c in delta if check_value(c) is False]
 
-                scope2 = self.ca.run_find_scope(list(scope), kappaD)  # TODO: replace with real findscope arguments when done!
+                scope2 = self.ca.run_find_scope(list(scope))
 
                 if len(scope2) < len(scope):
                     self.run(scope2)
