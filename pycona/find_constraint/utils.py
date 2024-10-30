@@ -99,8 +99,6 @@ def remove_redundant_conj(C1):
         flag_le = False
 
         for c1 in conj_args:
-            print(c1.name)
-            # Tias is on 3.9, no 'match' please!
             if c1.name == "==":
                 flag_eq = True
             elif c1.name == "!=":
