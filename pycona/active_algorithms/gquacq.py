@@ -1,7 +1,6 @@
 import time
 import cpmpy as cp
 
-import networkx as nx
 from cpmpy.transformations.get_variables import get_variables
 
 from .algorithm_core import AlgorithmCAInteractive
@@ -91,6 +90,11 @@ class GQuAcq(AlgorithmCAInteractive):
         :param r: The index of a relation in gamma.
         :return: List of learned constraints.
         """
+        try:
+            import networkx as nx
+        except ImportError:
+            raise ImportError("To use the predictAsk function of PQuAcq, networkx needs to be installed")
+        
         gq_counter = 0
 
         C = [c for c in self.env.instance.cl if get_relation(c, self.env.instance.language) == r]
