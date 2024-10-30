@@ -99,9 +99,16 @@ class FindC2(FindCBase):
                     delta = join_con_net(delta, kappaD)
 
     def generate_findc_query(self, L, delta):
-        # TODO: optimize to work better
         """
-        Changes directly the values of the variables
+        Generates example to be posted as a query, violating at least one but not all constraints from delta.
+        With Delta_p subseteq Delta being the set of constraints in Delta with conjunction size p,
+        the example must also not violate all constraints from Delta_p, while violating at least one (if possible)
+
+        From the paper:
+        choose e'_Y in sol(L[Y]) with
+        \emptyset \not\subseteq \kappa_{\Delta}(e'_Y) \subset \Delta,
+        minimizing p such that \emptyset \not\subseteq \kappa_{\Delta_p}(e'_Y) \subseteq \Delta_p if possible
+        \kappa_{\Delta_p}(e'_Y) \subseteq \Delta_p otherwise
 
         :param L: learned network in the given scope
         :param delta: candidate constraints in the given scope
