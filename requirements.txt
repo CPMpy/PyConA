@@ -1,2 +1,2 @@
 cpmpy>=0.9
-sklearn
+scikit-learn
