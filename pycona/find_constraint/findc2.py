@@ -108,35 +108,33 @@ class FindC2(FindCBase):
         :return: Boolean value representing a success or failure on the generation
         """
 
-        tmp = cp.Model(L)
+        # example needs to satisfy learned constrains
+        constraints = L
+
+        # example needs to violate at least one from Delta but not all
+        delta_sat = cp.sum([c for c in delta])  # Get the amount of satisfied constraints from Delta
+        constraints.append(delta_sat > 0)
+        constraints.append(delta_sat < len(delta))
 
         max_conj_size = get_max_conjunction_size(delta)
         delta_p = get_delta_p(delta)
 
-        p = cp.intvar(0, max_conj_size)
-        kappa_delta_p = cp.intvar(0, len(delta), shape=(max_conj_size,))
-        p_soft_con = cp.boolvar(shape=(max_conj_size,))
+        p = 0  # conjunction size to focus on
 
-        for i in range(max_conj_size):
-            tmp += kappa_delta_p[i] == sum([c for c in delta_p[i]])
-            p_soft_con[i] = (kappa_delta_p[i] > 0)
+        while p < max_conj_size:
 
-        tmp += p == min([i for i in range(max_conj_size) if (kappa_delta_p[i] < len(delta_p[i]))])
+            tmp_model = cp.Model(constraints)
+            delta_p_sat = cp.sum([c for c in delta_p[p]])  # Get the amount of satisfied constraints from Delta_p
+            tmp_model += delta_p_sat > 0  # example needs to not violate all from Delta_p
 
-        objective = sum([c for c in delta])  # get the amount of satisfied constraints from B
+            # but also violate at least one if possible
+            b = cp.boolvar()
+            tmp_model += b.implies(delta_p_sat < len(delta_p[p]))
+            tmp_model.maximize(b)
 
-        # at least 1 violated and at least 1 satisfied
-        # we want this to assure that each answer of the user will reduce
-        # the set of candidates
-        tmp += objective < len(delta)
-        tmp += objective > 0
+            if tmp_model.solve():
+                return True  # query found, return true
 
-        # Try first without objective
-        s = cp.SolverLookup.get("ortools", tmp)
+            p += 1  # increase p if no query found for current conjunction size
 
-        # run with the objective
-        s.minimize(100 * p - p_soft_con[p])
-
-        flag = s.solve(time_limit=self.time_limit)
-
-        return flag
+        return False  # no query could be found
