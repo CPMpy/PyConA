@@ -96,7 +96,7 @@ class FindC2(FindCBase):
                 if len(scope2) < len(scope):
                     self.run(scope2)
                 else:
-                    delta = join_con_net(delta, kappaD)
+                    delta = set(join_con_net(delta, kappaD))
 
     def generate_findc_query(self, L, delta):
         """
