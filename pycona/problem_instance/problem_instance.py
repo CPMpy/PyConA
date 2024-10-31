@@ -4,10 +4,11 @@ import warnings
 import cpmpy as cp
 from cpmpy.expressions.core import Expression
 from cpmpy.expressions.variables import _NumVarImpl, NDVarArray
+from cpmpy.transformations.normalize import toplevel_list
 
 from cpmpy.expressions.utils import is_any_list
 from itertools import combinations
-from ..utils import get_scope, replace_variables
+from ..utils import get_scope, replace_variables, combine_multiple_sets, unravel
 
 
 class ProblemInstance:
@@ -238,6 +239,61 @@ class ProblemInstance:
                     replace_dict[abs_vars[i]] = v
                 constraint = replace_variables(relation, replace_dict)
                 all_cons.append(constraint)
+
+        self.bias = all_cons
+
+    def is_atomic(self, expression):
+        """ Determine if the expression is atomic (a single variable or constant). """
+        # Implement logic to check if the expression is atomic
+        return isinstance(expression, _NumVarImpl) or not isinstance(expression, Expression)
+
+    def has_subexpressions(self, expression):
+        return all(self.is_atomic(a) for a in expression.args)
+
+    def get_subexpressions(self, expression):
+        """ Extract subexpressions from the given expression. """
+        # Implement logic to parse the expression and return its subexpressions
+        # This will depend on how expressions are represented in your system
+        return expression.args
+
+    def generate_combinations(self, expression, variables):
+        """ Recursively generate all combinations of variables for the given expression. """
+        #print(f"processing (sub)expression: {expression}")
+        if self.is_atomic(expression):
+            # Base case: if the expression is a single variable or constant
+            return [v for v in variables]
+
+        # Recursive case: handle subexpressions
+        subexpressions = self.get_subexpressions(expression)
+        sub_combinations = [self.generate_combinations(sub, variables) for sub in subexpressions]
+
+        #print("sub_combinations: ", sub_combinations)
+        combos = combine_multiple_sets(sub_combinations)
+        #print(f"combinations found for expression {expression}: {len(combos)} --- combos: {combos} from sub_combos: {sub_combinations}")
+        return combos
+
+    def construct_bias2(self):
+        """ Construct the bias (candidate constraints) for the problem instance. """
+        all_cons = []
+        X = list(self.X)
+
+        for relation in self.language:
+            #print(f"#### Processing relation {relation} -------------------------")
+            # Start the recursive combination generation
+            abs_vars = get_scope(relation)
+            all_combinations = self.generate_combinations(relation, X)
+            rel_cons = []
+            for comb in all_combinations:
+                combos = []
+                unravel(comb, combos)
+                replace_dict = dict()
+                for i, v in enumerate(combos):
+                    replace_dict[abs_vars[i]] = v
+                constraint = replace_variables(relation, replace_dict)
+                rel_cons.append(constraint)
+            all_cons.extend(rel_cons)
+            #print(f"Finished processing relation {relation} --- Constraints created: {len(rel_cons)}")
+            #input()
 
         self.bias = all_cons
 
