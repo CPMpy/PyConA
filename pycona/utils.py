@@ -421,6 +421,11 @@ def combine_sets_distinct(set1, set2):
     :param set2: Second set.
     :return: Set of distinct pairs.
     """
+    if not isinstance(set1, set):
+        set1 = set(set1)
+    if not isinstance(set2, set):
+        set2 = set(set2)
+
     result = set()
     examined = set()
     for a in set1:
@@ -430,6 +435,35 @@ def combine_sets_distinct(set1, set2):
                 # Add tuple of sorted combinations to remove duplicates in different order
                 result.add(tuple(sorted((a, b))))
     return result
+
+def combine_multiple_sets(sets):
+    if not sets:
+        return set()
+    if len(sets) == 1:
+        return sets[0]
+
+    for i, s in enumerate(sets):
+        if not isinstance(s, set):
+            sets[i] = set(s)
+
+    # Start with the first set
+    combined_result = {(x,) for x in sets[0]}
+
+    # Iteratively combine with each subsequent set
+    for i in range(1, len(sets)):
+        new_result = set()
+        examined = set()
+        for combination in combined_result:
+            for element in sets[i]:
+                if element not in set(combination) and element not in examined:
+                    new_combination = combination + (element,)
+                    new_result.add(tuple(sorted(new_combination)))
+            examined.update(combination)
+
+        combined_result = new_result
+
+    return combined_result
+
 
 def unravel(lst, newlist):
     """
