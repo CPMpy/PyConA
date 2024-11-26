@@ -41,5 +41,4 @@ def construct_sudoku(block_size_row, block_size_col, grid_size):
 
     oracle = ConstraintOracle(C_T)
 
-    print(len(C_T))
     return instance, oracle
