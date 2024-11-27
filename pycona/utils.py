@@ -410,7 +410,7 @@ def get_variables_from_constraints(constraints):
     # Create set to hold unique variables
     variable_set = set()
     for constraint in constraints:
-        variable_set.update(get_variables(constraint))
+        variable_set.update(get_scope(constraint))
 
     extract_nums = lambda s: list(map(int, s.name[s.name.index("[") + 1:s.name.index("]")].split(',')))
 
