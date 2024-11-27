@@ -115,19 +115,24 @@ class GQuAcq(AlgorithmCAInteractive):
             gen_flag = False
             B = [c for c in self.env.instance.bias if
                  get_relation(c, self.env.instance.language) == r and frozenset(get_scope(c)).issubset(Y)]
+
             D = [tuple([v.name for v in get_scope(c)]) for c in B]  # missing edges that can be completed (exist in B)
 
-            # if already a subset of it was negative, or cannot be completed to a clique, continue to next
-            if not any(Y2.issubset(Y) for Y2 in self._negativeQ) and can_be_clique(G.subgraph(Y), D):
-                # if potentially generalizing leads to unsat, continue to next
-                new_CL = self.env.instance.cl.copy()
-                new_CL += B
-                if cp.Model(new_CL).solve() and self.env.ask_generalization_query(r, B):
-                    gen_flag = True
-                    self.env.add_to_cl(B)
-                else:
-                    gq_counter += 1
-                    self._negativeQ.append(Y)
+            # If one of the following conditions is true, continue to next:
+            # already a subset of it was negative, cannot be completed to a clique, does not add any constraint or
+            # potentially generalizing leads to UNSAT
+            new_CL = self.env.instance.cl.copy()
+            new_CL += B
+            if any(Y2.issubset(Y) for Y2 in self._negativeQ) or not can_be_clique(G.subgraph(Y), D) or \
+                    len(B) > 0 or cp.Model(new_CL).solve():
+                continue
+
+            if self.env.ask_generalization_query(self.env.instance.language[r], B):
+                gen_flag = True
+                self.env.add_to_cl(B)
+            else:
+                gq_counter += 1
+                self._negativeQ.append(Y)
 
             if not gen_flag:
                 communities = nx.community.greedy_modularity_communities(G.subgraph(Y))
