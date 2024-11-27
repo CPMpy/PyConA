@@ -40,17 +40,22 @@ The repository has implemented various approaches and methods from the literatur
 
 #### Clone and Install from this Repo
 
+```python
+git clone -b main https://github.com/CPMpy/PyConA.git
+```
+
+## Pip install through pip
+
 You can install pycona through pip
-```commandline
+```python
 pip install pycona
 ```
 
 ### Basics
 
 In **PyConA**, the ProblemInstance class represents the instance of the problem the user wants to acquire the constraints for. It must be initialized with the variables of the problem and a language. 
-A CA system is then used to acquire the constraints. 
-**PyConA** currently implements only interactive CA algorithms (module .active_algorithms).
-The core of PyConA is the CA system (CASystem class). A CASystem can be run on a given ProblemInstance. The ProblemInstance class represents the instance of the problem the user wants to acquire the constraints for. It must be initialized with the variables of the problem and a language.
+A CA system is then used to acquire the constraints. A CA system uses a CA environment to configure its options. 
+**PyConA** currently implements only interactive CA algorithms (module .active_algorithms).The core of interactive CA systems is the AlgorithmCAInteractive class. This is subclassed with different algorithms presented in the literature.
 
 ### Basic Tutorials
 
