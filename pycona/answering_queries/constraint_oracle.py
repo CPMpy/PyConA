@@ -52,7 +52,8 @@ class ConstraintOracle(Oracle):
 
     def answer_recommendation_query(self, c):
         """
-        Answer a recommendation query by checking if the recommended constraint is part of the constraints.
+        Answer a recommendation query by checking if the recommended constraint is part of the target set of
+        constraints, or logically implied by the constraints in the target set of constraints.
 
         :param c: The recommended constraint.
         :return: A boolean indicating if the recommended constraint is in the set of constraints.
