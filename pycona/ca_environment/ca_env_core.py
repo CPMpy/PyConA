@@ -1,7 +1,5 @@
-from abc import ABC, abstractmethod
-
-from .. import Metrics
-from ..problem_instance import ProblemInstance
+from abc import ABC
+from cpmpy.expressions.core import Expression
 
 
 class CAEnv(ABC):
@@ -61,3 +59,39 @@ class CAEnv(ABC):
     def converged(self, converged):
         """ Set the convergence value """
         self._converged = converged
+
+    def remove_from_bias(self, C):
+        """
+        Remove given constraints from the bias (candidates)
+
+        :param C: list of constraints to be removed from B
+        """
+        if isinstance(C, Expression):
+            C = [C]
+        assert isinstance(C, list), "remove_from_bias accepts as input a list of constraints or a constraint"
+
+        if self.verbose >= 3:
+            print(f"removing the following constraints from bias: {C}")
+
+        self.instance.bias = list(set(self.instance.bias) - set(C))
+
+    def add_to_cl(self, C):
+        """
+        Add the given constraints to the list of learned constraints
+
+        :param C: Constraints to add to CL
+        """
+        if isinstance(C, Expression):
+            C = [C]
+        assert isinstance(C, list), "add_to_cl accepts as input a list of constraints or a constraint"
+
+        if self.verbose >= 3:
+            print(f"adding the following constraints to C_L: {C}")
+
+        # Add constraint(s) c to the learned network and remove them from the bias
+        self.instance.cl.extend(C)
+        self.instance.bias = list(set(self.instance.bias) - set(C))
+
+        self.metrics.cl += 1
+        if self.verbose == 1:
+            print("L", end="")
