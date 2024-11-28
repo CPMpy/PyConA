@@ -1,7 +1,5 @@
-from abc import ABC, abstractmethod
-
-from .. import Metrics
-from ..problem_instance import ProblemInstance
+from abc import ABC
+from cpmpy.expressions.core import Expression
 
 
 class CAEnv(ABC):
