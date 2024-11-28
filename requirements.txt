@@ -1,2 +1,3 @@
 cpmpy>=0.9
 scikit-learn
+networkx

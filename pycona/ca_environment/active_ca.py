@@ -194,7 +194,8 @@ class ActiveCAEnv(CAEnv):
         :param C: A list of constraints to which the generalization is applied.
         :return: The oracle's answer to the generalization query (True/False).
         """
-        assert isinstance(c, Expression), "Generalization queries first input needs to be a constraint"
+        assert c in set(self.instance.language), "Generalization queries first input needs to be an expression from " \
+                                                 "the language"
         assert isinstance(C, list), "Generalization queries second input needs to be a list of constraints"
         assert all(isinstance(c1, Expression) for c1 in C), "Generalization queries second input needs to be " \
                                                            "a list of constraints"
