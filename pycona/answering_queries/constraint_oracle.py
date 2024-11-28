@@ -1,3 +1,4 @@
+import cpmpy as cp
 from cpmpy.transformations.normalize import toplevel_list
 
 from .oracle import Oracle
@@ -46,19 +47,21 @@ class ConstraintOracle(Oracle):
 
         # Need the oracle to answer based only on the constraints with a scope that is a subset of Y
         suboracle = get_con_subset(self.constraints, Y)
-
         # Check if at least one constraint is violated or not
         return all([check_value(c) for c in suboracle])
 
     def answer_recommendation_query(self, c):
         """
-        Answer a recommendation query by checking if the recommended constraint is part of the constraints.
+        Answer a recommendation query by checking if the recommended constraint is part of the target set of
+        constraints, or logically implied by the constraints in the target set of constraints.
 
         :param c: The recommended constraint.
         :return: A boolean indicating if the recommended constraint is in the set of constraints.
         """
-        # Check if the recommended constraint is in the set of constraints
-        return c in self.constraints
+        # Check if the recommended constraint is in the set of constraints or implied by them
+        m = cp.Model(self.constraints)
+        m += ~c
+        return not m.solve()
 
     def answer_generalization_query(self, C):
         """

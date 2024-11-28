@@ -12,12 +12,11 @@ def construct_examtt_simple(nsemesters=9, courses_per_semester=6, slots_per_day=
     """
     :return: a ProblemInstance object, along with a constraint-based oracle
     """
-
-    total_courses = nsemesters * courses_per_semester
     total_slots = slots_per_day * days_for_exams
 
-    parameter_vars = ['nsemesters', 'courses_per_semester', 'slots_per_day', 'days_for_exams']
-    parameters = {var_name: locals()[var_name] for var_name in parameter_vars}
+    parameters = {'nsemesters': nsemesters, 'courses_per_semester': courses_per_semester,
+                      'slots_per_day': slots_per_day, 'days_for_exams': days_for_exams}
+
     # Variables
     courses = cp.intvar(1, total_slots, shape=(nsemesters, courses_per_semester), name="courses")
 
@@ -31,7 +30,6 @@ def construct_examtt_simple(nsemesters=9, courses_per_semester=6, slots_per_day=
     C_T = list(model.constraints)
 
     if model.solve():
-        solution = courses.value()
         courses.clear()
     else:
         print("no solution")
