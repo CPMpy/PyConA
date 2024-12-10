@@ -18,7 +18,7 @@ class PQGen(QGenBase):
         """
         Initialize the PQGen with the given parameters.
 
-        :param ca_env: The CA system.
+        :param ca_env: The CA environment.
         :param objective_function: The objective function for PQGen.
         :param time_limit: The time limit for query generation.
         :param blimit: The bias limit to start optimization.
@@ -128,7 +128,7 @@ class PQGen(QGenBase):
         # So a solution was found, try to find a better one now
         s.solution_hint(lY, values)
         try:
-            objective = self.obj(B=B, ca_system=self.env)
+            objective = self.obj(B=B, ca_env=self.env)
         except:
             raise NotImplementedError(f"Objective given not implemented in PQGen: {self.obj} - Please report an issue")
 

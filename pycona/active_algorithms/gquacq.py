@@ -21,9 +21,9 @@ class GQuAcq(AlgorithmCAInteractive):
 
     def __init__(self, ca_env: ActiveCAEnv = None, qg_max=10):
         """
-        Initialize the PQuAcq algorithm with an optional constraint acquisition system.
+        Initialize the PQuAcq algorithm with an optional constraint acquisition environment.
 
-        :param ca_env: An instance of CASystem, default is None.
+        :param ca_env: An instance of ActiveCAEnv, default is None.
         : param GQmax: maximum number of generalization queries
         """
         super().__init__(ca_env)

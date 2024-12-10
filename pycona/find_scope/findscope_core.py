@@ -9,15 +9,15 @@ class FindScopeBase(ABC):
     Abstract class interface for FindScope implementations
     """
 
-    def __init__(self, ca_system: ActiveCAEnv = None, time_limit=0.2, *, split_func=split_half):
+    def __init__(self, ca_env: ActiveCAEnv = None, time_limit=0.2, *, split_func=split_half):
         """
         Initialize the FindScopeBase class.
 
-        :param ca_system: The constraint acquisition system.
+        :param ca_env: The constraint acquisition environment.
         :param time_limit: The time limit for findscope variable spliting.
         :param split_func: The function used to split the variables in findscope.
         """
-        self.ca = ca_system
+        self.ca = ca_env
         self._time_limit = time_limit
         self.split_func = split_func
 
@@ -44,21 +44,21 @@ class FindScopeBase(ABC):
     @property
     def ca(self):
         """
-        Get the constraint acquisition system.
+        Get the constraint acquisition environment.
 
-        :return: The constraint acquisition system.
+        :return: The constraint acquisition environment.
         """
         return self._ca
 
     @ca.setter
-    def ca(self, ca_system: ActiveCAEnv):
+    def ca(self, ca_env: ActiveCAEnv):
         """
-        Set the constraint acquisition system.
+        Set the constraint acquisition environment.
 
-        :param ca_system: The constraint acquisition system.
+        :param ca_env: The constraint acquisition environment.
         """
-        if ca_system is not None:
-            self._ca = ca_system
+        if ca_env is not None:
+            self._ca = ca_env
             if self._ca.find_scope != self:
                 self._ca.find_scope = self
 

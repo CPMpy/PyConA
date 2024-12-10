@@ -15,9 +15,9 @@ class QuAcq(AlgorithmCAInteractive):
 
     def __init__(self, ca_env: ActiveCAEnv = None):
         """
-        Initialize the QuAcq algorithm with an optional constraint acquisition system.
+        Initialize the QuAcq algorithm with an optional constraint acquisition environment.
 
-        :param ca_env: An instance of CASystem, default is None.
+        :param ca_env: An instance of ActiveCAEnv, default is None.
         """
         super().__init__(ca_env)
 

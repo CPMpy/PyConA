@@ -17,10 +17,10 @@ class MQuAcq2(AlgorithmCAInteractive):
 
     def __init__(self, ca_env: ActiveCAEnv = None, *, perform_analyzeAndLearn: bool = True, cliques_cutoff=1):
         """
-        Initialize the MQuAcq2 algorithm with an optional constraint acquisition system,
+        Initialize the MQuAcq2 algorithm with an optional constraint acquisition environment,
         a flag to perform analyze and learn, and a cliques cutoff value.
 
-        :param ca_env: An instance of CASystem, default is None.
+        :param ca_env: An instance of ActiveCAEnv, default is None.
         :param perform_analyzeAndLearn: A boolean flag to perform analyze and learn, default is True.
         :param cliques_cutoff: A cutoff value for cliques, default is 1.
         """

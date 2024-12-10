@@ -15,7 +15,7 @@ class QGen(QGenBase):
         """
         Initialize the QGen class.
 
-        :param ca_env: An instance of CASystem, default is None.
+        :param ca_env: An instance of ActiveCAEnv, default is None.
         :param time_limit: Time limit for the solver, default is 600 seconds.
         """
         super().__init__(ca_env, time_limit)

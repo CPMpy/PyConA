@@ -8,8 +8,8 @@ from sklearn.tree import DecisionTreeClassifier
 
 class ProbaActiveCAEnv(ActiveCAEnv):
     """
-    Class interface for the prediction based interactive CA system, using predictions for the constraints.
-    Storing the necessary elements and providing functionality to update the state of the system as needed.
+    Class interface for the prediction based interactive CA environment, using predictions for the constraints.
+    Storing the necessary elements and providing functionality to update the state of the environment as needed.
     """
 
     def __init__(self, qgen: 'QGenBase' = None,

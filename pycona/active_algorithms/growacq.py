@@ -17,9 +17,9 @@ class GrowAcq(AlgorithmCAInteractive):
 
     def __init__(self, ca_env: ActiveCAEnv = None, inner_algorithm: AlgorithmCAInteractive = None):
         """
-        Initialize the GrowAcq algorithm with an optional constraint acquisition system and inner algorithm.
+        Initialize the GrowAcq algorithm with an optional constraint acquisition environment and inner algorithm.
 
-        :param ca_env: An instance of CASystem, default is None.
+        :param ca_env: An instance of ActiveCAEnv, default is None.
         :param inner_algorithm: An instance of ICA_Algorithm to be used as the inner algorithm, default is MQuAcq2.
         """
         env = ca_env if ca_env is not None else ProbaActiveCAEnv()

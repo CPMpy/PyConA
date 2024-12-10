@@ -9,9 +9,9 @@ class QGenBase(ABC):
 
     def __init__(self, ca_env: ActiveCAEnv = None, time_limit=2):
         """
-        Initialize the QGenBase with the given CA system and time limit.
+        Initialize the QGenBase with the given CA environment and time limit.
 
-        :param ca_env: The CA system used.
+        :param ca_env: The CA environment used.
         :param time_limit: Overall time limit.
         """
         self._env = ca_env

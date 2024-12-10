@@ -9,14 +9,14 @@ class FindScope(FindScopeBase):
     Bessiere, Christian, et al., "Constraint acquisition via Partial Queries", IJCAI 2013.
     """
 
-    def __init__(self, ca_system: ActiveCAEnv = None, time_limit=0.2):
+    def __init__(self, ca_env: ActiveCAEnv = None, time_limit=0.2):
         """
         Initialize the FindScope class.
 
-        :param ca_system: The constraint acquisition system.
+        :param ca_env: The constraint acquisition environment.
         :param time_limit: The time limit for findscope query generation.
         """
-        super().__init__(ca_system, time_limit)
+        super().__init__(ca_env, time_limit)
 
     def run(self, Y):
         """
