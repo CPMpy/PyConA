@@ -57,8 +57,18 @@ class TestAlgorithms:
         assert len(learned_instance.cl) > 0
         assert learned_instance.get_cpmpy_model().solve()
 
+    @pytest.mark.parametrize(("bench", "algorithm", "classifier"), _generate_proba_inputs(), ids=str)
+    def test_proba(self, bench, algorithm, classifier):
+        env = ca.ProbaActiveCAEnv(classifier=classifier)
+        (instance, oracle) = bench
+        ca_system = algorithm
+        ca_system.env = env
+        learned_instance = ca_system.learn(instance=instance, oracle=oracle)
+        assert len(learned_instance.cl) > 0
+        assert learned_instance.get_cpmpy_model().solve()
+
     @pytest.mark.parametrize(("bench", "inner_alg", "classifier"), _generate_proba_inputs(), ids=str)
-    def test_proba(self, bench, inner_alg, classifier):
+    def test_proba_growacq(self, bench, inner_alg, classifier):
         env = ca.ProbaActiveCAEnv(classifier=classifier)
         (instance, oracle) = bench
         ca_system = ca.GrowAcq(env, inner_algorithm=inner_alg)
