@@ -11,15 +11,15 @@ class FindCBase(ABC):
     Abstract class interface for FindC implementations.
     """
 
-    def __init__(self, ca_system: ActiveCAEnv = None, time_limit=0.2, *, findc_obj=findc_obj_splithalf):
+    def __init__(self, ca_env: ActiveCAEnv = None, time_limit=0.2, *, findc_obj=findc_obj_splithalf):
         """
         Initialize the FindCBase class.
 
-        :param ca_system: The constraint acquisition system.
+        :param ca_env: The constraint acquisition environment.
         :param time_limit: The time limit for findc query generation.
         :param findc_obj: The function to use for findc object, default is findc_obj_splithalf.
         """
-        self.ca = ca_system
+        self.ca = ca_env
         self._time_limit = time_limit
         self.obj = findc_obj
 
@@ -36,21 +36,21 @@ class FindCBase(ABC):
     @property
     def ca(self):
         """
-        Get the constraint acquisition system.
+        Get the constraint acquisition environment.
 
-        :return: The constraint acquisition system.
+        :return: The constraint acquisition environment.
         """
         return self._ca
 
     @ca.setter
-    def ca(self, ca_system: ActiveCAEnv = None):
+    def ca(self, ca_env: ActiveCAEnv = None):
         """
-        Set the constraint acquisition system.
+        Set the constraint acquisition environment.
 
-        :param ca_system: The constraint acquisition system.
+        :param ca_env: The constraint acquisition environment.
         """
-        if ca_system is not None:
-            self._ca = ca_system
+        if ca_env is not None:
+            self._ca = ca_env
             if self._ca.findc != self:
                 self._ca.findc = self
 
@@ -131,7 +131,7 @@ class FindCBase(ABC):
         # So a solution was found, try to find a better one now
         s.solution_hint(Y, values)
 
-        objective = self.obj(sat, delta, ca_system=self.ca)
+        objective = self.obj(sat, delta, ca_env=self.ca)
         # Run with the objective
         s.maximize(objective)  # We want to try and do it like a dichotomic search
 

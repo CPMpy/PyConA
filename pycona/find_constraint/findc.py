@@ -14,15 +14,15 @@ class FindC(FindCBase):
     Bessiere, Christian, et al., "Learning constraints through partial queries", AIJ 2023
     """
 
-    def __init__(self, ca_system: ActiveCAEnv = None, time_limit=0.2, *, findc_obj=findc_obj_splithalf):
+    def __init__(self, ca_env: ActiveCAEnv = None, time_limit=0.2, *, findc_obj=findc_obj_splithalf):
         """
         Initialize the FindC class.
 
-        :param ca_system: The constraint acquisition system.
+        :param ca_env: The constraint acquisition environment.
         :param time_limit: The time limit for findc query generation.
         :param findc_obj: The function to use for findc objective, default is findc_obj_splithalf.
         """
-        super().__init__(ca_system, time_limit, findc_obj=findc_obj)
+        super().__init__(ca_env, time_limit, findc_obj=findc_obj)
 
     def run(self, scope):
         """
