@@ -128,7 +128,7 @@ class PQGen(QGenBase):
         # So a solution was found, try to find a better one now
         s.solution_hint(lY, values)
         try:
-            objective = self.obj(B=B, ca_system=self.env)
+            objective = self.obj(B=B, ca_env=self.env)
         except:
             raise NotImplementedError(f"Objective given not implemented in PQGen: {self.obj} - Please report an issue")
 
