@@ -18,7 +18,7 @@ class PQGen(QGenBase):
         """
         Initialize the PQGen with the given parameters.
 
-        :param ca_env: The CA system.
+        :param ca_env: The CA environment.
         :param objective_function: The objective function for PQGen.
         :param time_limit: The time limit for query generation.
         :param blimit: The bias limit to start optimization.
