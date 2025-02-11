@@ -3,7 +3,7 @@ import random
 import cpmpy as cp
 import numpy as np
 from cpmpy.expressions.utils import all_pairs
-
+from cpmpy.transformations.normalize import toplevel_list
 from ..answering_queries.constraint_oracle import ConstraintOracle
 from ..problem_instance import ProblemInstance, absvar
 
@@ -56,7 +56,7 @@ def construct_job_shop_scheduling_problem(n_jobs, machines, horizon, seed=0):
         for (j1, t1), (j2, t2) in all_pairs(zip(*tasks_on_mach)):
             m += (end[j1, t1] <= start[j2, t2]) | (end[j2, t2] <= start[j1, t1])
 
-    C_T = list(model.constraints)
+    C_T = list(set(toplevel_list(model.constraints)))
 
     max_duration = max(duration)
 

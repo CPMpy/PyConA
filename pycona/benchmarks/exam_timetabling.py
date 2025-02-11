@@ -2,7 +2,7 @@ import cpmpy as cp
 
 from ..answering_queries.constraint_oracle import ConstraintOracle
 from ..problem_instance import ProblemInstance, absvar
-
+from cpmpy.transformations.normalize import toplevel_list
 
 def day_of_exam(course, slots_per_day):
     return course // slots_per_day
@@ -27,7 +27,7 @@ def construct_examtt_simple(nsemesters=9, courses_per_semester=6, slots_per_day=
     for row in courses:
         model += cp.AllDifferent(day_of_exam(row, slots_per_day)).decompose()
 
-    C_T = list(model.constraints)
+    C_T = list(set(toplevel_list(model.constraints)))
 
     if model.solve():
         courses.clear()
