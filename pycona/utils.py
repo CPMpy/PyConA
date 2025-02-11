@@ -66,7 +66,7 @@ def get_con_subset(B, Y):
     :return: List of constraints whose scope is a subset of Y.
     """
     Y = frozenset(Y)
-    return [c for c in B if frozenset(get_scope(c)).issubset(Y)]
+    return [c for c in B if frozenset(get_variables(c)).issubset(Y)]
 
 
 def get_kappa(B, Y):
@@ -78,7 +78,7 @@ def get_kappa(B, Y):
     :return: List of constraints whose scope is a subset of Y and are not satisfied.
     """
     Y = frozenset(Y)
-    return [c for c in B if frozenset(get_scope(c)).issubset(Y) and check_value(c) is False]
+    return [c for c in B if frozenset(get_variables(c)).issubset(Y) and check_value(c) is False]
 
 
 def get_lambda(B, Y):
@@ -90,7 +90,7 @@ def get_lambda(B, Y):
     :return: List of constraints whose scope is a subset of Y and are satisfied.
     """
     Y = frozenset(Y)
-    return [c for c in B if frozenset(get_scope(c)).issubset(Y) and check_value(c) is True]
+    return [c for c in B if frozenset(get_variables(c)).issubset(Y) and check_value(c) is True]
 
 
 def gen_pairwise(v1, v2):
@@ -173,7 +173,7 @@ def get_scopes_vars(C):
     :param C: List of constraints.
     :return: Set of variables involved in the scopes of constraints.
     """
-    return set([x for scope in [get_scope(c) for c in C] for x in scope])
+    return set([x for scope in [get_variables(c) for c in C] for x in scope])
 
 
 def get_scopes(C):
@@ -183,7 +183,7 @@ def get_scopes(C):
     :param C: List of constraints.
     :return: List of unique scopes of constraints.
     """
-    return list(set([tuple(get_scope(c)) for c in C]))
+    return list(set([tuple(get_variables(c)) for c in C]))
 
 
 def get_scope(constraint):
@@ -410,7 +410,7 @@ def get_variables_from_constraints(constraints):
     # Create set to hold unique variables
     variable_set = set()
     for constraint in constraints:
-        variable_set.update(get_scope(constraint))
+        variable_set.update(get_variables(constraint))
 
     extract_nums = lambda s: list(map(int, s.name[s.name.index("[") + 1:s.name.index("]")].split(',')))
 
