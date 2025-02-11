@@ -200,6 +200,12 @@ class ProbaActiveCAEnv(ActiveCAEnv):
         """ Setter method for _instance """
         self._instance = instance
         self.feature_representation.instance = instance
+        if len(self.datasetX) == 0:
+            self.datasetX.extend(self.feature_representation.featurize_constraints(instance.excluded_cons))
+            self.datasetY.extend([0] * len(instance.excluded_cons))
+
+            self.datasetX.extend(self.feature_representation.featurize_constraints(instance.cl))
+            self.datasetY.extend([1] * len(instance.cl))
 
     def remove_from_bias(self, C):
         """
