@@ -48,7 +48,7 @@ class ProbaActiveCAEnv(ActiveCAEnv):
     def init_state(self, instance, oracle, verbose, metrics=None):
         """ Initialize the state of the CA system. """
         super().init_state(instance, oracle, verbose, metrics)
-        if self.training_frequency >= 0 and len(self.instance.cl) > 0:
+        if self.training_frequency >= 0 and len(set(self.datasetY)) == 2:
             self._train_classifier()
         if self._classifier_trained:
             self._predict_bias_proba()
@@ -57,21 +57,21 @@ class ProbaActiveCAEnv(ActiveCAEnv):
 
     def run_query_generation(self):
         """ Run the query generation process. """
-        if self.training_frequency > 0 and len(self.instance.cl) > 0:
+        if self.training_frequency > 0 and len(set(self.datasetY)) == 2:
             self._train_classifier()
         self._predict_bias_proba()
         return super().run_query_generation()
 
     def run_find_scope(self, Y):
         """ Run the find scope process. """
-        if self.training_frequency > 1 and len(self.instance.cl) > 0:
+        if self.training_frequency > 1 and len(set(self.datasetY)) == 2:
             self._train_classifier()
             self._predict_bias_proba()
         return super().run_find_scope(Y)
 
     def run_findc(self, scope):
         """ Run the find constraint process. """
-        if self.training_frequency > 2 and len(self.instance.cl) > 0:
+        if self.training_frequency > 2 and len(set(self.datasetY)) == 2:
             self._train_classifier()
             self._predict_bias_proba()
         return super().run_findc(scope)
