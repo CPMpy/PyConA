@@ -21,7 +21,7 @@ class GQuAcq(AlgorithmCAInteractive):
 
     def __init__(self, ca_env: ActiveCAEnv = None, qg_max=10):
         """
-        Initialize the PQuAcq algorithm with an optional constraint acquisition environment.
+        Initialize the GQuAcq algorithm with an optional constraint acquisition environment.
 
         :param ca_env: An instance of ActiveCAEnv, default is None.
         : param GQmax: maximum number of generalization queries
@@ -30,16 +30,21 @@ class GQuAcq(AlgorithmCAInteractive):
         self._negativeQ = []
         self._qg_max = qg_max
 
-    def learn(self, instance: ProblemInstance, oracle: Oracle = UserOracle(), verbose=0, metrics: Metrics = None):
+    def learn(self, instance: ProblemInstance, oracle: Oracle = UserOracle(), verbose=0, X=None, metrics: Metrics = None):
         """
-        Learn constraints using the QuAcq algorithm by generating queries and analyzing the results.
+        Learn constraints using the GQuAcq algorithm by generating queries and analyzing the results.
 
         :param instance: the problem instance to acquire the constraints for
         :param oracle: An instance of Oracle, default is to use the user as the oracle.
         :param verbose: Verbosity level, default is 0.
         :param metrics: statistics logger during learning
+        :param X: The set of variables to consider, default is None.
         :return: the learned instance
         """
+        if X is None:
+            X = instance.X
+        assert isinstance(X, list) and set(X).issubset(set(instance.X)), "When using .learn(), set parameter X must be a list of variables"
+
         self.env.init_state(instance, oracle, verbose, metrics)
 
         if len(self.env.instance.bias) == 0:
@@ -52,8 +57,8 @@ class GQuAcq(AlgorithmCAInteractive):
                 print("Number of Queries: ", self.env.metrics.membership_queries_count)
 
             gen_start = time.time()
-            Y = self.env.run_query_generation()
-            gen_end = time.time()
+            Y = self.env.run_query_generation(X)
+            gen_end = time.time()   
 
             if len(Y) == 0:
                 # if no query can be generated it means we have (prematurely) converged to the target network -----

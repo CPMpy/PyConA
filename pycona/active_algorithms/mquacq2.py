@@ -31,7 +31,7 @@ class MQuAcq2(AlgorithmCAInteractive):
         self.cl_neighbours = None
         self.hashX = None
 
-    def learn(self, instance: ProblemInstance, oracle: Oracle = UserOracle(), verbose=0, metrics: Metrics = None):
+    def learn(self, instance: ProblemInstance, oracle: Oracle = UserOracle(), verbose=0, X=None, metrics: Metrics = None):
         """
         Learn constraints using the modified QuAcq algorithm by generating queries and analyzing the results.
 
@@ -39,8 +39,13 @@ class MQuAcq2(AlgorithmCAInteractive):
         :param oracle: An instance of Oracle, default is to use the user as the oracle.
         :param verbose: Verbosity level, default is 0.
         :param metrics: statistics logger during learning
+        :param X: The set of variables to consider, default is None.
         :return: the learned instance
         """
+        if X is None:
+            X = instance.X
+        assert isinstance(X, list) and set(X).issubset(set(instance.X)), "When using .learn(), set parameter X must be a list of variables"
+
         self.env.init_state(instance, oracle, verbose, metrics)
 
         # Hash the variables
@@ -52,7 +57,7 @@ class MQuAcq2(AlgorithmCAInteractive):
 
         while True:
             gen_start = time.time()
-            Y = self.env.run_query_generation()
+            Y = self.env.run_query_generation(X)
             gen_end = time.time()
             self.env.metrics.increase_generation_time(gen_end - gen_start)
 

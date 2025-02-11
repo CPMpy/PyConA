@@ -55,12 +55,12 @@ class ProbaActiveCAEnv(ActiveCAEnv):
         else:
             self._bias_proba = {c: 0.01 for c in self.instance.bias}
 
-    def run_query_generation(self):
+    def run_query_generation(self, X=None):
         """ Run the query generation process. """
         if self.training_frequency > 0 and len(set(self.datasetY)) == 2:
             self._train_classifier()
         self._predict_bias_proba()
-        return super().run_query_generation()
+        return super().run_query_generation(X)
 
     def run_find_scope(self, Y):
         """ Run the find scope process. """
