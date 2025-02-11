@@ -50,9 +50,9 @@ class ActiveCAEnv(CAEnv):
         self.find_scope.ca = self
         self.findc.ca = self
 
-    def run_query_generation(self):
+    def run_query_generation(self, Y=None):
         """ Run the query generation process. """
-        Y = self.qgen.generate()
+        Y = self.qgen.generate(Y)
         return Y
 
     def run_find_scope(self, Y):

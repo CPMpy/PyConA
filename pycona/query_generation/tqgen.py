@@ -60,28 +60,31 @@ class TQGen(QGenBase):
         """Set the lamda parameter of TQGen."""
         self._lamda = lamda
 
-    def generate(self):
+    def generate(self, Y=None):
         """
         Generate a query using TQGen.
 
         :return: A list of variables that form the query.
         """
+        if Y is None:
+            Y = self.env.instance.X
+        assert isinstance(Y, list), "When generating a query, Y must be a list of variables"
+
         if self._lamda is None:
             self._lamda = len(self._env.instance.X)
 
         ttime = 0
-
-        bias = self.env.instance.bias
-        cl = self.env.instance.cl
+        bias = get_con_subset(self.env.instance.bias, Y)
+        cl = get_con_subset(self.env.instance.cl, Y)
 
         while (ttime < self.time_limit) and (len(bias) > 0):
             t = min([self.tau, self.time_limit - ttime])
             l = max([self.lamda, get_min_arity(bias)])
 
-            Y = find_suitable_vars_subset2(l, bias, self.env.instance.X)
+            Y2 = find_suitable_vars_subset2(l, bias, Y)
 
-            B = get_con_subset(bias, Y)
-            Cl = get_con_subset(cl, Y)
+            B = get_con_subset(bias, Y2)
+            Cl = get_con_subset(cl, Y2)
 
             m = cp.Model(Cl)
             s = cp.SolverLookup.get("ortools", m)
