@@ -12,7 +12,7 @@ class AlgorithmCAInteractive(ABC):
 
     def __init__(self, ca_env: ActiveCAEnv = None):
         """
-        Initialize the AlgorithmCAInteractive with a constraint acquisition system.
+        Initialize the AlgorithmCAInteractive with a constraint acquisition environment.
 
         :param ca_env: A ca environment.
         """

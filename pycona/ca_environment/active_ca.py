@@ -8,8 +8,9 @@ from ..utils import get_kappa
 
 class ActiveCAEnv(CAEnv):
     """
-    Class interface for the interactive CA systems. Using all CA components (Algorithm, Query generation, FindScope,
-    FindC etc.), storing the necessary elements and providing functionality to update the state of the system as needed.
+    Class interface for the interactive CA environment. Using all CA components (Algorithm, Query generation, FindScope,
+    FindC etc.), storing the necessary elements and providing functionality to update the state of the ca environment
+     as needed.
     """
 
     def __init__(self, qgen: 'QGenBase' = None,

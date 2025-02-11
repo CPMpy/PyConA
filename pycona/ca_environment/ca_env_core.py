@@ -9,7 +9,7 @@ class CAEnv(ABC):
 
     def __init__(self):
         """
-        Initialize the CA system.
+        Initialize the CA environment.
         """
         self._instance = None
         self.metrics = None
@@ -17,7 +17,7 @@ class CAEnv(ABC):
         self.converged = False
 
     def init_state(self, **kwargs):
-        """ Initialize the state of the CA system. """
+        """ Initialize the state of the CA environment. """
         self._converged = False
 
     @property
@@ -42,12 +42,12 @@ class CAEnv(ABC):
 
     @property
     def verbose(self):
-        """ Get the verbosity of the system """
+        """ Get the verbosity of the environment """
         return self._verbose
 
     @verbose.setter
     def verbose(self, verbose):
-        """ Set the verbosity of the system """
+        """ Set the verbosity of the environment """
         self._verbose = verbose
 
     @property

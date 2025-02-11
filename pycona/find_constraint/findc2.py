@@ -16,15 +16,15 @@ class FindC2(FindCBase):
     """
     # TODO optimize to work better (probably only needs to make better the generate_find_query2)
 
-    def __init__(self, ca_system: ActiveCAEnv = None, time_limit=0.2, findscope=None):
+    def __init__(self, ca_env: ActiveCAEnv = None, time_limit=0.2, findscope=None):
         """
         Initialize the FindC2 class.
 
-        :param ca_system: The constraint acquisition system.
+        :param ca_env: The constraint acquisition environment.
         :param time_limit: The time limit for findc query generation.
         :param findscope: The function to find the scope.
         """
-        super().__init__(ca_system, time_limit)
+        super().__init__(ca_env, time_limit)
         self._findscope = findscope
 
     @property
