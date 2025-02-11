@@ -308,7 +308,7 @@ def replace_variables(constraint, var_mapping):
             else:
                 new_args.append(replace_variables(argument, var_mapping))
         # Replace the arguments in the copied expression
-        new_constraint.args = new_args
+        new_constraint.update_args(new_args)
         return new_constraint
     else:
         return constraint
