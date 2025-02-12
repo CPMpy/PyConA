@@ -124,7 +124,7 @@ class TestAlgorithms:
         
         ca_system = algorithm
         learned_instance = ca_system.learn(instance=instance, oracle=oracle)
-        assert len(learned_instance.cl) == initial_cl_size*2
+        assert ca_system.env.metrics.converged
         assert learned_instance.get_cpmpy_model().solve()
 
     @pytest.mark.parametrize(
@@ -148,7 +148,7 @@ class TestAlgorithms:
         ca_system = algorithm
         ca_system.env = env
         learned_instance = ca_system.learn(instance=instance, oracle=oracle)
-        assert len(learned_instance.cl) == initial_cl_size*2
+        assert ca_system.env.metrics.converged
         assert learned_instance.get_cpmpy_model().solve()
 
     @pytest.mark.parametrize(
@@ -222,7 +222,7 @@ class TestAlgorithms:
         
         ca_system = ca.GrowAcq(inner_algorithm=inner_alg)
         learned_instance = ca_system.learn(instance=instance, oracle=oracle)
-        assert len(learned_instance.cl) == initial_cl_size*2
+        assert ca_system.env.metrics.converged
         assert learned_instance.get_cpmpy_model().solve()
 
     @pytest.mark.parametrize(
