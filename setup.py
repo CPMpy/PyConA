@@ -15,7 +15,7 @@ def get_version(rel_path):
     else:
         raise RuntimeError("Unable to find version string.")
 
-with open("README.md", "r") as descr_file:
+with open("pip-description", "r") as descr_file:
     long_description = descr_file.read()
 
 setup(
@@ -31,13 +31,10 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'cpmpy>=0.9',
+        'cpmpy>=0.9.24',
         'scikit-learn',
+        'networkx',
     ],
-    #extra dependencies.
-    extras_require={
-        "FULL":  ["networkx"],
-    },
     classifiers=[
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.6",
@@ -48,5 +45,5 @@ setup(
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6'
+    python_requires='>=3.9'
 )
