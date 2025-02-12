@@ -1,6 +1,6 @@
 
 import cpmpy as cp
-
+from cpmpy.transformations.normalize import toplevel_list
 from ..answering_queries.constraint_oracle import ConstraintOracle
 from ..problem_instance import ProblemInstance, absvar
 
@@ -45,6 +45,6 @@ def construct_murder_problem():
 
     instance = ProblemInstance(variables=grid, language=lang, name="murder")
 
-    oracle = ConstraintOracle(C_T)
+    oracle = ConstraintOracle(list(set(toplevel_list(C_T))))
 
     return instance, oracle

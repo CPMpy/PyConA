@@ -67,25 +67,30 @@ class PQGen(QGenBase):
         """
         self._blimit = blimit
 
-    def generate(self):
+    def generate(self, Y=None):
         """
         Generate a query using PQGen.
 
         :return: A set of variables that form the query.
         """
-        # Start time (for the cutoff t)
+
+        if Y is None:
+            Y = self.env.instance.X
+        assert isinstance(Y, list), "When generating a query, Y must be a list of variables"
+
+        # Start time (for the cutoff time)
         t0 = time.time()
 
         # Project down to only vars in scope of B
-        Y = frozenset(get_variables(self.env.instance.bias))
+        Y2 = frozenset(get_variables(self.env.instance.bias))
+
+        if len(Y2) < len(Y):
+            Y = Y2
+
         lY = list(Y)
 
-        if len(Y) == len(self.env.instance.X):
-            B = self.env.instance.bias
-            Cl = self.env.instance.cl
-        else:
-            B = get_con_subset(self.env.instance.bias, Y)
-            Cl = get_con_subset(self.env.instance.cl, Y)
+        B = get_con_subset(self.env.instance.bias, Y)
+        Cl = get_con_subset(self.env.instance.cl, Y)
 
         # If no constraints left in B, just return
         if len(B) == 0:

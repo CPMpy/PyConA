@@ -1,5 +1,5 @@
 import cpmpy as cp
-
+from cpmpy.transformations.normalize import toplevel_list
 from ..answering_queries.constraint_oracle import ConstraintOracle
 from ..problem_instance import ProblemInstance, absvar
 
@@ -29,7 +29,7 @@ def construct_sudoku(block_size_row, block_size_col, grid_size):
         for j in range(0, grid_size, block_size_col):
             model += cp.AllDifferent(grid[i:i + block_size_row, j:j + block_size_col]).decompose()  # python's indexing
 
-    C_T = list(model.constraints)
+    C_T = list(set(toplevel_list(model.constraints)))
 
     # Create the language:
     AV = absvar(2)  # create abstract vars - as many as maximum arity

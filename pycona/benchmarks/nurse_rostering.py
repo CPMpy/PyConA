@@ -1,5 +1,5 @@
 import cpmpy as cp
-
+from cpmpy.transformations.normalize import toplevel_list
 from ..answering_queries.constraint_oracle import ConstraintOracle
 from ..problem_instance import ProblemInstance, absvar
 
@@ -30,7 +30,7 @@ def construct_nurse_rostering(shifts_per_day=3, num_days=5, num_nurses=8, nurses
     if not model.solve():
         raise Exception("The problem has no solution")
 
-    C_T = list(model.constraints)
+    C_T = list(set(toplevel_list(model.constraints)))
 
     # Create the language:
     AV = absvar(2)  # create abstract vars - as many as maximum arity

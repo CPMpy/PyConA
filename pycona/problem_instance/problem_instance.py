@@ -241,15 +241,19 @@ class ProblemInstance:
 
         self.bias = all_cons
 
-    def construct_bias_for_var(self, v1):
+    def construct_bias_for_var(self, v1, X=None):
         """
         Construct the bias (candidate constraints) for a specific variable.
 
         :param v1: The variable for which to construct the bias.
+        :param X: The set of variables to consider, default is None.
         """
+        if X is None:
+            X = self.X
+        assert isinstance(X, list) and set(X).issubset(set(self.X)), "When using .construct_bias_for_var(), set parameter X must be a list of variables. Instead, got: " + str(X)
 
         all_cons = []
-        X = list(set(self.X) - {v1})
+        X = list(set(X) - {v1})
 
         for relation in self.language:
             abs_vars = get_scope(relation)

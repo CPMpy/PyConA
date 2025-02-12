@@ -26,7 +26,7 @@ class GrowAcq(AlgorithmCAInteractive):
         super().__init__(env)
         self.inner_algorithm = inner_algorithm if inner_algorithm is not None else MQuAcq2(ca_env)
 
-    def learn(self, instance: ProblemInstance, oracle: Oracle = UserOracle(), verbose=0, metrics: Metrics = None):
+    def learn(self, instance: ProblemInstance, oracle: Oracle = UserOracle(), verbose=0, X=None, metrics: Metrics = None):
         """
         Learn constraints by incrementally adding variables and using the inner algorithm to learn constraints
         for each added variable.
@@ -34,9 +34,14 @@ class GrowAcq(AlgorithmCAInteractive):
         :param instance: the problem instance to acquire the constraints for
         :param oracle: An instance of Oracle, default is to use the user as the oracle.
         :param verbose: Verbosity level, default is 0.
+        :param X: The set of variables to consider, default is None.
         :param metrics: statistics logger during learning
         :return: the learned instance
         """
+        if X is None:
+            X = instance.X
+        assert isinstance(X, list) and set(X).issubset(set(instance.X)), "When using .learn(), set parameter X must be a list of variables"
+
         self.env.init_state(instance, oracle, verbose, metrics)
 
         if verbose >= 1:
@@ -44,21 +49,22 @@ class GrowAcq(AlgorithmCAInteractive):
 
         self.inner_algorithm.env = copy.copy(self.env)
 
-        self.env.instance.X = []
+        Y = []
 
-        n_vars = len(self.env.instance.variables.flat)
-        for x in self.env.instance.variables.flat:
+        n_vars = len(X)
+        for x in X:
             # we 'grow' the inner bias by adding one extra variable at a time
-            self.env.instance.X.append(x)
+            Y.append(x)
             # add the constraints involving x and other added variables
-            self.env.instance.construct_bias_for_var(x)
+            if len(self.env.instance.bias) == 0:
+                self.env.instance.construct_bias_for_var(x, Y)
             if verbose >= 3:
                 print(f"Added variable {x} in GrowAcq")
                 print("size of B in growacq: ", len(self.env.instance.bias))
 
             if verbose >= 2:
-                print(f"\nGrowAcq: calling inner_algorithm for {len(self.env.instance.X)}/{n_vars} variables")
-            self.env.instance = self.inner_algorithm.learn(self.env.instance, oracle, verbose=verbose, metrics=self.env.metrics)
+                print(f"\nGrowAcq: calling inner_algorithm for {len(Y)}/{n_vars} variables")
+            self.env.instance = self.inner_algorithm.learn(self.env.instance, oracle, verbose=verbose, X=Y, metrics=self.env.metrics)
 
             if verbose >= 3:
                 print("C_L: ", len(self.env.instance.cl))

@@ -18,7 +18,7 @@ class QGenBase(ABC):
         self._time_limit = time_limit
 
     @abstractmethod
-    def generate(self):
+    def generate(self, Y=None):
         """
         Method that all QGen implementations must implement to generate a query.
         """
