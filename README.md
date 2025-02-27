@@ -62,7 +62,7 @@ A CA system is then used to acquire the constraints. A CA system uses a CA envir
 - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CPMpy/PyConA/blob/main/notebooks/introductory_example.ipynb)**Introductory Example**
 - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CPMpy/PyConA/blob/main/notebooks/Comparing%20different%20algorithms%20and%20methods.ipynb)**Comparing different algorithms and methods**
 - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CPMpy/PyConA/blob/main/notebooks/Prediction-based%20CA%20system.ipynb)**Prediction-based CA system**
-- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CPMpy/PyConA/blob/main/notebooks/CP24%20Tutorial%20Demo.ipynb)**CP24 Tutorial Demo**
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/CPMpy/PyConA/blob/main/notebooks/Tutorial%20Demo.ipynb)**Tutorial Demo**
 
 ### How to Cite PyConA
 
