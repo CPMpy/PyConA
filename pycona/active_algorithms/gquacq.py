@@ -48,7 +48,7 @@ class GQuAcq(AlgorithmCAInteractive):
         self.env.init_state(instance, oracle, verbose, metrics)
 
         if len(self.env.instance.bias) == 0:
-            self.env.instance.construct_bias()
+            self.env.instance.construct_bias(X)
 
         while True:
             if self.env.verbose > 0:
@@ -66,6 +66,7 @@ class GQuAcq(AlgorithmCAInteractive):
                 if self.env.verbose >= 1:
                     print(f"\nLearned {self.env.metrics.cl} constraints in "
                           f"{self.env.metrics.membership_queries_count} queries.")
+                self.env.instance.bias = []
                 return self.env.instance
 
             self.env.metrics.increase_generation_time(gen_end - gen_start)

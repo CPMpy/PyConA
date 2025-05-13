@@ -53,7 +53,7 @@ class MQuAcq2(AlgorithmCAInteractive):
         self.cl_neighbours = np.zeros((len(self.env.instance.X), len(self.env.instance.X)), dtype=bool)
 
         if len(self.env.instance.bias) == 0:
-            self.env.instance.construct_bias()
+            self.env.instance.construct_bias(X)
 
         while True:
             gen_start = time.time()
@@ -67,6 +67,7 @@ class MQuAcq2(AlgorithmCAInteractive):
                 if self.env.verbose >= 1:
                     print(f"\nLearned {self.env.metrics.cl} constraints in "
                           f"{self.env.metrics.membership_queries_count} queries.")
+                self.env.instance.bias = []
                 return self.env.instance
 
             self.env.metrics.increase_generated_queries()
