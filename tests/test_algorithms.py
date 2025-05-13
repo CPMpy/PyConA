@@ -14,7 +14,7 @@ fast_problem_generators = [construct_murder_problem()]  # Keep only the smallest
 problem_generators = [construct_murder_problem(), construct_examtt_simple(), construct_nurse_rostering()]
 
 classifiers = [DecisionTreeClassifier(), RandomForestClassifier()]
-algorithms = [ca.QuAcq(), ca.MQuAcq(), ca.MQuAcq2(), ca.GQuAcq(), ca.PQuAcq()]
+algorithms = [ca.QuAcq(), ca.MQuAcq(), ca.MQuAcq2(), ca.MineAcq(), ca.PQuAcq()]
 fast_tests_algorithms = [ca.QuAcq(), ca.MQuAcq(), ca.MQuAcq2()]
 
 def _generate_fast_benchmarks():

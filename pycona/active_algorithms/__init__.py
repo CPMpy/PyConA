@@ -12,4 +12,4 @@ from .mquacq2 import MQuAcq2
 from .mquacq import MQuAcq
 from .growacq import GrowAcq
 from .pquacq import PQuAcq
-from .gquacq import GQuAcq
+from .gquacq import MineAcq
