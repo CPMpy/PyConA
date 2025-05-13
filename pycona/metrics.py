@@ -111,14 +111,14 @@ class Metrics:
         """
         self.total_size_queries += amount
 
-    def aggreagate_max_waiting_time(self, max2):
+    def aggreagate_max_waiting_time(self, t):
         """
         Aggregate the maximum waiting time.
 
-        :param max2: The new waiting time to compare with the current maximum.
+        :param t: The new waiting time to compare with the current maximum.
         """
-        if self.max_waiting_time < max2:
-            self.max_waiting_time = max2
+        if self.max_waiting_time < t:
+            self.max_waiting_time = t
 
     def increase_recommendation_queries_count(self, amount=1):
         """
