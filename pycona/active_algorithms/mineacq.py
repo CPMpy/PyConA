@@ -12,41 +12,40 @@ from ..answering_queries import Oracle, UserOracle
 from .. import Metrics
 
 
-class GQuAcq(AlgorithmCAInteractive):
+class MineAcq(AlgorithmCAInteractive):
 
     """
-    QuAcq variation algorithm, using mine&Ask to detect types of variables and ask genralization queries. From:
+    QuAcq variation algorithm, using mine&Ask to detect types of variables and ask generalization queries. From:
     "Detecting Types of Variables for Generalization in Constraint Acquisition", ICTAI 2015.
     """
 
     def __init__(self, ca_env: ActiveCAEnv = None, qg_max=10):
         """
-        Initialize the GQuAcq algorithm with an optional constraint acquisition environment.
+        Initialize the MineAcq algorithm with an optional constraint acquisition environment.
 
         :param ca_env: An instance of ActiveCAEnv, default is None.
-        : param GQmax: maximum number of generalization queries
+        :param qg_max: maximum number of generalization queries
         """
         super().__init__(ca_env)
         self._negativeQ = []
         self._qg_max = qg_max
 
-    def learn(self, instance: ProblemInstance, oracle: Oracle = UserOracle(), verbose=0, X=None, metrics: Metrics = None):
+    def learn(self, instance: ProblemInstance, oracle: Oracle = UserOracle(), verbose=0, metrics: Metrics = None, X=None):
         """
-        Learn constraints using the GQuAcq algorithm by generating queries and analyzing the results.
+        Learn constraints using the MineAcq algorithm by generating queries and analyzing the results. 
+        Using mine&ask to detect types of variables and ask generalization queries.
 
         :param instance: the problem instance to acquire the constraints for
         :param oracle: An instance of Oracle, default is to use the user as the oracle.
         :param verbose: Verbosity level, default is 0.
         :param metrics: statistics logger during learning
-        :param X: The set of variables to consider, default is None.
+        :param X: List of variables to consider for learning. If None, uses all variables from the instance.
         :return: the learned instance
         """
-        if X is None:
-            X = instance.X
-        assert isinstance(X, list), "When using .learn(), set parameter X must be a list of variables. Instead got: {}".format(X)
-        assert set(X).issubset(set(instance.X)), "When using .learn(), set parameter X must be a subset of the problem instance variables. Instead got: {}".format(X)
-
         self.env.init_state(instance, oracle, verbose, metrics)
+
+        if X is None:
+            X = list(self.env.instance.variables.flat)
 
         if len(self.env.instance.bias) == 0:
             self.env.instance.construct_bias(X)
@@ -55,18 +54,18 @@ class GQuAcq(AlgorithmCAInteractive):
             if self.env.verbose > 0:
                 print("Size of CL: ", len(self.env.instance.cl))
                 print("Size of B: ", len(self.env.instance.bias))
-                print("Number of Queries: ", self.env.metrics.membership_queries_count)
+                print("Number of Queries: ", self.env.metrics.total_queries)
 
             gen_start = time.time()
             Y = self.env.run_query_generation(X)
-            gen_end = time.time()   
+            gen_end = time.time()
 
             if len(Y) == 0:
                 # if no query can be generated it means we have (prematurely) converged to the target network -----
                 self.env.metrics.finalize_statistics()
                 if self.env.verbose >= 1:
                     print(f"\nLearned {self.env.metrics.cl} constraints in "
-                          f"{self.env.metrics.membership_queries_count} queries.")
+                          f"{self.env.metrics.total_queries} queries.")
                 self.env.instance.bias = []
                 return self.env.instance
 
@@ -130,16 +129,13 @@ class GQuAcq(AlgorithmCAInteractive):
             # potentially generalizing leads to UNSAT
             new_CL = self.env.instance.cl.copy()
             new_CL += B
-            if any(Y2.issubset(Y) for Y2 in self._negativeQ) or not can_be_clique(G.subgraph(Y), D) or \
-                    len(B) > 0 or cp.Model(new_CL).solve():
-                continue
-
-            if self.env.ask_generalization_query(self.env.instance.language[r], B):
-                gen_flag = True
-                self.env.add_to_cl(B)
-            else:
-                gq_counter += 1
-                self._negativeQ.append(Y)
+            if not (any(Y2.issubset(Y) for Y2 in self._negativeQ) or not (can_be_clique(G.subgraph(Y), D) and (len(B) > 0) and cp.Model(new_CL).solve())):
+                if self.env.ask_generalization_query(self.env.instance.language[r], B):
+                    gen_flag = True
+                    self.env.add_to_cl(B)
+                else:
+                    gq_counter += 1
+                    self._negativeQ.append(Y)
 
             if not gen_flag:
                 communities = nx.community.greedy_modularity_communities(G.subgraph(Y))
