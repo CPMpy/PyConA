@@ -4,7 +4,7 @@ from ..answering_queries.constraint_oracle import ConstraintOracle
 from ..problem_instance import ProblemInstance, absvar
 
 
-def construct_sudoku(block_size_row, block_size_col, grid_size):
+def construct_sudoku(block_size_row=3, block_size_col=3, grid_size=9):
     """
     :return: a ProblemInstance object, along with a constraint-based oracle
     """
