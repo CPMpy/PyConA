@@ -34,6 +34,7 @@ class MQuAcq2(AlgorithmCAInteractive):
     def learn(self, instance: ProblemInstance, oracle: Oracle = UserOracle(), verbose=0, X=None, metrics: Metrics = None):
         """
         Learn constraints using the modified QuAcq algorithm by generating queries and analyzing the results.
+        Learns multiple constraints from each generated query. Uses analyzeAndLearn to focus on the most promising constraints.
 
         :param instance: the problem instance to acquire the constraints for
         :param oracle: An instance of Oracle, default is to use the user as the oracle.

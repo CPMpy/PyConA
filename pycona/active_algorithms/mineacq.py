@@ -32,7 +32,8 @@ class MineAcq(AlgorithmCAInteractive):
 
     def learn(self, instance: ProblemInstance, oracle: Oracle = UserOracle(), verbose=0, metrics: Metrics = None, X=None):
         """
-        Learn constraints using the QuAcq algorithm by generating queries and analyzing the results.
+        Learn constraints using the MineAcq algorithm by generating queries and analyzing the results. 
+        Using mine&ask to detect types of variables and ask generalization queries.
 
         :param instance: the problem instance to acquire the constraints for
         :param oracle: An instance of Oracle, default is to use the user as the oracle.

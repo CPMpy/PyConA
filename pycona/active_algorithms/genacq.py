@@ -33,6 +33,7 @@ class GenAcq(AlgorithmCAInteractive):
     def learn(self, instance: ProblemInstance, oracle: Oracle = UserOracle(), verbose=0, metrics: Metrics = None, X=None):
         """
         Learn constraints using the GenAcq algorithm by generating queries and analyzing the results.
+        Using generalization queries on given types of variables.
 
         :param instance: the problem instance to acquire the constraints for
         :param oracle: An instance of Oracle, default is to use the user as the oracle.
