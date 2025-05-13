@@ -217,14 +217,14 @@ class ProblemInstance:
             warnings.warn("The model is empty, as no constraint is learned yet for this instance.")
         return cp.Model(self._cl)
 
-    def construct_bias(self):
+    def construct_bias(self, X=None):
         """
         Construct the bias (candidate constraints) for the problem instance.
         """
+        if X is None:
+            X = self.X
 
         all_cons = []
-
-        X = list(self.X)
 
         for relation in self.language:
 
@@ -239,35 +239,43 @@ class ProblemInstance:
                 constraint = replace_variables(relation, replace_dict)
                 all_cons.append(constraint)
 
-        self.bias = all_cons
+        self.bias = list(set(all_cons) - set(self.cl) - set(self.excluded_cons))
+        
 
-    def construct_bias_for_var(self, v1, X=None):
+    def construct_bias_for_vars(self, v1, X=None):
         """
         Construct the bias (candidate constraints) for a specific variable.
 
-        :param v1: The variable for which to construct the bias.
+        :param v1: The variable for which to construct the bias. Can also be a list of variables.
         :param X: The set of variables to consider, default is None.
         """
+
+        if not isinstance(v1, list):
+            v1 = [v1]
+
         if X is None:
             X = self.X
-        assert isinstance(X, list) and set(X).issubset(set(self.X)), "When using .construct_bias_for_var(), set parameter X must be a list of variables. Instead, got: " + str(X)
+        
+        # Sort X based on variable names 
+        X = sorted(X, key=lambda var: var.name)
 
         all_cons = []
-        X = list(set(X) - {v1})
 
         for relation in self.language:
+
             abs_vars = get_scope(relation)
 
-            combs = combinations(X, len(abs_vars) - 1)
+            combs = combinations(X, len(abs_vars))
 
             for comb in combs:
-                replace_dict = {abs_vars[0]: v1}
+                replace_dict = dict()
                 for i, v in enumerate(comb):
-                    replace_dict[abs_vars[i + 1]] = v
+                    replace_dict[abs_vars[i]] = v
                 constraint = replace_variables(relation, replace_dict)
                 all_cons.append(constraint)
 
-        self.bias = all_cons
+        self.bias = [c for c in all_cons if any(v in set(get_scope(c)) for v in v1)]
+        self.bias = list(set(self.bias) - set(self.cl) - set(self.excluded_cons))
 
     def __str__(self):
         """

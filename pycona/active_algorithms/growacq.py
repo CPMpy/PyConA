@@ -57,7 +57,7 @@ class GrowAcq(AlgorithmCAInteractive):
             Y.append(x)
             # add the constraints involving x and other added variables
             if len(self.env.instance.bias) == 0:
-                self.env.instance.construct_bias_for_var(x, Y)
+                self.env.instance.construct_bias_for_vars(x, Y)
             if verbose >= 3:
                 print(f"Added variable {x} in GrowAcq")
                 print("size of B in growacq: ", len(self.env.instance.bias))
