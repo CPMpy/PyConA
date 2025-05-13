@@ -8,7 +8,7 @@ from ..answering_queries.constraint_oracle import ConstraintOracle
 from ..problem_instance import ProblemInstance, absvar
 
 
-def construct_job_shop_scheduling_problem(n_jobs, machines, horizon, seed=0):
+def construct_job_shop_scheduling_problem(n_jobs=10, machines=2, horizon=15, seed=0):
     """
     :return: a ProblemInstance object, along with a constraint-based oracle
     """
