@@ -123,7 +123,11 @@ class ProblemInstance:
         """
         self._variables = vars
         if vars is not None:
-            self.X = list(self._variables.flatten())
+            if isinstance(vars, NDVarArray):
+                self.X = list(self._variables.flatten())
+            else:
+                self.X = vars
+                self._variables = cp.cpm_array(vars)
 
     @property
     def X(self):

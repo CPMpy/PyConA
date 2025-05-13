@@ -38,7 +38,8 @@ class PQuAcq(AlgorithmCAInteractive):
         """
         if X is None:
             X = instance.X
-        assert isinstance(X, list) and set(X).issubset(set(instance.X)), "When using .learn(), set parameter X must be a list of variables"
+        assert isinstance(X, list), "When using .learn(), set parameter X must be a list of variables. Instead got: {}".format(X)
+        assert set(X).issubset(set(instance.X)), "When using .learn(), set parameter X must be a subset of the problem instance variables. Instead got: {}".format(X)
 
         self.env.init_state(instance, oracle, verbose, metrics)
 
