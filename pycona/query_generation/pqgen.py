@@ -102,18 +102,17 @@ class PQGen(QGenBase):
         if len(Cl) == 0:
             Cl = [cp.sum(Y) >= 1]
 
+        m = cp.Model(Cl)
+        s = cp.SolverLookup.get("ortools", m)
+
         if not self.partial and len(B) > self.blimit:
 
-            m = cp.Model(Cl)
-            flag = m.solve(num_workers=8)  # no time limit to ensure convergence
+            flag = s.solve(num_workers=8)  # no time limit to ensure convergence
 
             if flag and not all([c.value() for c in B]):
                 return lY
             else:
                 self.partial = True
-
-        m = cp.Model(Cl)
-        s = cp.SolverLookup.get("ortools", m)
         
         # We want at least one constraint to be violated to assure that each answer of the user
         # will lead to new information
