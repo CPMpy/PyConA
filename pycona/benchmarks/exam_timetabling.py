@@ -8,7 +8,7 @@ def day_of_exam(course, slots_per_day):
     return course // slots_per_day
 
 
-def construct_examtt_simple(nsemesters=9, courses_per_semester=6, slots_per_day=9, days_for_exams=14):
+def construct_examtt_simple(nsemesters=6, courses_per_semester=3, slots_per_day=3, days_for_exams=10):
     """
     :return: a ProblemInstance object, along with a constraint-based oracle
     """
