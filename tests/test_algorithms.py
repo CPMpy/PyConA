@@ -11,7 +11,7 @@ from sklearn.ensemble import RandomForestClassifier
 # Modify the problem generators for fast tests
 fast_problem_generators = [construct_murder_problem()]  # Keep only the smallest problem
 
-problem_generators = [construct_murder_problem(), construct_examtt_simple(6, 3, 2, 10), construct_nurse_rostering()]
+problem_generators = [construct_murder_problem(), construct_examtt_simple(), construct_nurse_rostering()]
 
 classifiers = [DecisionTreeClassifier(), RandomForestClassifier()]
 algorithms = [ca.QuAcq(), ca.MQuAcq(), ca.MQuAcq2(), ca.GQuAcq(), ca.PQuAcq()]
