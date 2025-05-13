@@ -26,7 +26,7 @@ from .ca_environment import ActiveCAEnv, ProbaActiveCAEnv
 from .find_constraint import FindC, FindC2
 from .query_generation import QGen, TQGen, PQGen
 from .find_scope import FindScope, FindScope2
-from .active_algorithms import QuAcq, PQuAcq, MineAcq, GrowAcq, MQuAcq, MQuAcq2
+from .active_algorithms import QuAcq, PQuAcq, MineAcq, GrowAcq, MQuAcq, MQuAcq2, GenAcq
 from .problem_instance import ProblemInstance, absvar, langBasic, langDist, langEqNeq
 from .predictor import CountsPredictor, FeaturesRelDim, FeaturesSimpleRel
 
