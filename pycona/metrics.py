@@ -252,7 +252,7 @@ class Metrics:
             results_df = pd.DataFrame([self.metrics_short_dict])
             print(results_df.to_string(index=False))
         except ImportError:
-            print(self.metrics_dict)
+            print(self.metrics_short_dict)
 
     @property
     def short_statistics(self):
@@ -264,7 +264,7 @@ class Metrics:
             results_df = pd.DataFrame([self.metrics_short_dict])
             return results_df
         except ImportError:
-            return self.metrics_dict
+            return self.metrics_short_dict
 
     def write_to_file(self, filename):
         """
