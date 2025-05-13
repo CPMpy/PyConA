@@ -322,8 +322,9 @@ def get_var_name(var):
     :return: The name of the variable without its indices.
     """
     name = re.findall(r"\[\d+[,\d+]*\]", var.name)
-    name = var.name.replace(name[0], '')
-    return name
+    if name:  # Check if we found any indices
+        return var.name.replace(name[0], '')
+    return var.name  # Return original name if no indices found
 
 
 def get_var_ndims(var):
@@ -344,9 +345,11 @@ def get_var_dims(var):
     Get the dimensions of a variable.
 
     :param var: The variable.
-    :return: The dimensions of the variable.
+    :return: The dimensions of the variable. Returns empty list if variable has no indices.
     """
     dims = re.findall(r"\[\d+[,\d+]*\]", var.name)
+    if not dims:  # If no indices found
+        return []
     dims_str = "".join(dims)
     dims = re.split(r"[\[\]]", dims_str)[1]
     dims = [int(dim) for dim in re.split(",", dims)]
@@ -406,13 +409,18 @@ def get_variables_from_constraints(constraints):
     :param constraints: List of constraints.
     :return: List of variables involved in the constraints.
     """
-
     # Create set to hold unique variables
     variable_set = set()
     for constraint in constraints:
         variable_set.update(get_variables(constraint))
 
-    extract_nums = lambda s: list(map(int, s.name[s.name.index("[") + 1:s.name.index("]")].split(',')))
+    def extract_nums(s):
+        dims = re.findall(r"\[\d+[,\d+]*\]", s.name)
+        if not dims:
+            return [0]  # Default value for variables without indices
+        dims_str = "".join(dims)
+        dims = re.split(r"[\[\]]", dims_str)[1]
+        return [int(dim) for dim in re.split(",", dims)]
 
     variable_list = sorted(variable_set, key=extract_nums)
     return variable_list
