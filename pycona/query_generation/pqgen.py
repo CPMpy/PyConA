@@ -67,31 +67,32 @@ class PQGen(QGenBase):
         """
         self._blimit = blimit
 
-    def generate(self, Y=None):
+    def reset_partial(self):
+        """
+        Reset the partial flag to False.
+        """
+        self.partial = False
+
+    def generate(self, X=None):
         """
         Generate a query using PQGen.
 
         :return: A set of variables that form the query.
         """
 
-        if Y is None:
-            Y = self.env.instance.X
-        assert isinstance(Y, list), "When generating a query, Y must be a list of variables"
-
-        # Start time (for the cutoff time)
+        if X is None:
+            X = self.env.instance.X
+        B = get_con_subset(self.env.instance.bias, X)
+        # Start time (for the cutoff t)
         t0 = time.time()
 
         # Project down to only vars in scope of B
-        Y2 = frozenset(get_variables(self.env.instance.bias))
-
-        if len(Y2) < len(Y):
-            Y = Y2
+        Y = frozenset(get_variables(B))
 
         lY = list(Y)
 
-        B = get_con_subset(self.env.instance.bias, Y)
         Cl = get_con_subset(self.env.instance.cl, Y)
-
+        
         # If no constraints left in B, just return
         if len(B) == 0:
             return set()
@@ -104,7 +105,7 @@ class PQGen(QGenBase):
         if not self.partial and len(B) > self.blimit:
 
             m = cp.Model(Cl)
-            flag = m.solve()  # no time limit to ensure convergence
+            flag = m.solve(num_workers=8)  # no time limit to ensure convergence
 
             if flag and not all([c.value() for c in B]):
                 return lY
@@ -113,13 +114,16 @@ class PQGen(QGenBase):
 
         m = cp.Model(Cl)
         s = cp.SolverLookup.get("ortools", m)
-
+        
         # We want at least one constraint to be violated to assure that each answer of the user
         # will lead to new information
         s += ~cp.all(B)
 
+        if self.env.verbose > 2:
+            print("Solving first without objective (to find at least one solution)...")
+
         # Solve first without objective (to find at least one solution)
-        flag = s.solve()
+        flag = s.solve(num_workers=8)
 
         t1 = time.time() - t0
         if not flag or (t1 > self.time_limit):
@@ -140,7 +144,10 @@ class PQGen(QGenBase):
         # Run with the objective
         s.maximize(objective)
 
-        flag2 = s.solve(time_limit=(self.time_limit - t1))
+        if self.env.verbose > 2:
+            print("Solving with objective...")
+
+        flag2 = s.solve(time_limit=(self.time_limit - t1), num_workers=8)
 
         if flag2:
             return lY
