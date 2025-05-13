@@ -12,14 +12,14 @@ from .. import Metrics
 class GenAcq(AlgorithmCAInteractive):
 
     """
-    GenAcq algorithm, using mine&Ask to detect types of variables and ask genralization queries. From:
+    GenAcq algorithm, using generalization queries on given types of variables. From:
 
-    "Detecting Types of Variables for Generalization in Constraint Acquisition", ICTAI 2015.
+    "Boosting Constraint Acquisition with Generalization Queries", ECAI 2014.
     """
 
     def __init__(self, ca_env: ActiveCAEnv = None, types=None, qg_max=3):
         """
-        Initialize the PQuAcq algorithm with an optional constraint acquisition environment.
+        Initialize the GenAcq algorithm with an optional constraint acquisition environment.
 
         :param ca_env: An instance of ActiveCAEnv, default is None.
         : param types: list of types of variables given by the user
@@ -32,7 +32,7 @@ class GenAcq(AlgorithmCAInteractive):
 
     def learn(self, instance: ProblemInstance, oracle: Oracle = UserOracle(), verbose=0, metrics: Metrics = None, X=None):
         """
-        Learn constraints using the QuAcq algorithm by generating queries and analyzing the results.
+        Learn constraints using the GenAcq algorithm by generating queries and analyzing the results.
 
         :param instance: the problem instance to acquire the constraints for
         :param oracle: An instance of Oracle, default is to use the user as the oracle.
