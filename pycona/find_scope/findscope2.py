@@ -1,7 +1,7 @@
 from ..ca_environment.active_ca import ActiveCAEnv
 from .findscope_core import FindScopeBase
 from ..utils import get_kappa, get_con_subset
-
+from ..find_scope.findscope_obj import split_proba
 
 class FindScope2(FindScopeBase):
     """
@@ -9,14 +9,14 @@ class FindScope2(FindScopeBase):
     Bessiere, Christian, et al., "Learning constraints through partial queries", AIJ 2023
     """
 
-    def __init__(self, ca_env: ActiveCAEnv = None, time_limit=0.2):
+    def __init__(self, ca_env: ActiveCAEnv = None, split_func=split_proba, time_limit=0.2):
         """
         Initialize the FindScope2 class.
 
         :param ca_env: The constraint acquisition environment.
         :param time_limit: The time limit for findscope query generation.
         """
-        super().__init__(ca_env, time_limit)
+        super().__init__(ca_env, time_limit, split_func=split_func)
         self._kappaB = []
 
     def run(self, Y, kappa=None):
@@ -72,7 +72,7 @@ class FindScope2(FindScopeBase):
 
         # Create Y1, Y2 -------------------------
         proba = self.ca.bias_proba if hasattr(self.ca, 'bias_proba') else []
-        Y1, Y2 = self.split_func(Y=Y, R=R, kappaB=kappaBRY, proba=proba)
+        Y1, Y2 = self.split_func(Y=Y, R=R, kappaB=kappaBRY, P_c=proba)
 
         S1 = set()
         S2 = set()
