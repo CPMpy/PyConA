@@ -53,7 +53,7 @@ class MQuAcq2(AlgorithmCAInteractive):
         self.cl_neighbours = np.zeros((len(self.env.instance.X), len(self.env.instance.X)), dtype=bool)
 
         if len(self.env.instance.bias) == 0:
-            self.env.instance.construct_bias()
+            self.env.instance.construct_bias(X)
 
         while True:
             gen_start = time.time()

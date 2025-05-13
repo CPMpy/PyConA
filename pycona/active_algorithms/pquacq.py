@@ -43,7 +43,7 @@ class PQuAcq(AlgorithmCAInteractive):
         self.env.init_state(instance, oracle, verbose, metrics)
 
         if len(self.env.instance.bias) == 0:
-            self.env.instance.construct_bias()
+            self.env.instance.construct_bias(X)
 
         while True:
             if self.env.verbose > 0:
