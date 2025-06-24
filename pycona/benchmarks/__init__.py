@@ -5,4 +5,4 @@ from .exam_timetabling import construct_examtt_simple
 from .job_shop_scheduling import construct_job_shop_scheduling_problem
 from .nurse_rostering import construct_nurse_rostering
 from .zebra import construct_zebra_problem
-
+from .nqueens import construct_nqueens_problem
