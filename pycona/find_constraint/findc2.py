@@ -1,10 +1,11 @@
 import cpmpy as cp
+import copy
 
 from ..ca_environment.active_ca import ActiveCAEnv
 from .utils import get_max_conjunction_size, get_delta_p
 from .findc_core import FindCBase
 from .utils import join_con_net
-from ..utils import restore_scope_values, get_con_subset, check_value
+from ..utils import restore_scope_values, get_con_subset, check_value, get_scope
 
 
 class FindC2(FindCBase):
@@ -14,7 +15,6 @@ class FindC2(FindCBase):
 
     This function works also for non-normalised target networks!
     """
-    # TODO optimize to work better (probably only needs to make better the generate_find_query2)
 
     def __init__(self, ca_env: ActiveCAEnv = None, time_limit=0.2, findscope=None):
         """
@@ -54,14 +54,15 @@ class FindC2(FindCBase):
         """
         assert self.ca is not None
 
+        scope_values = [x.value() for x in scope]
+        
         # Initialize delta
         delta = get_con_subset(self.ca.instance.bias, scope)
-        delta = join_con_net(delta, [c for c in delta if check_value(c) is False])
+        kappaD = [c for c in delta if check_value(c) is False]
+        delta = join_con_net(delta, kappaD)
 
         # We need to take into account only the constraints in the scope we search on
         sub_cl = get_con_subset(self.ca.instance.cl, scope)
-
-        scope_values = [x.value() for x in scope]
 
         while True:
 
@@ -76,6 +77,8 @@ class FindC2(FindCBase):
                 restore_scope_values(scope, scope_values)
 
                 # Return random c in delta otherwise (if more than one, they are equivalent w.r.t. C_l)
+                # Choose the constraint with the smallest number of conjunctions
+                delta = sorted(delta, key=lambda x: len(x.args))
                 return delta[0]
 
             self.ca.metrics.increase_findc_queries()
@@ -90,15 +93,14 @@ class FindC2(FindCBase):
 
                 kappaD = [c for c in delta if check_value(c) is False]
 
-                scope2 = self.ca.run_find_scope(list(scope), kappaD)  # TODO: replace with real findscope arguments when done!
+                #scope2 = self.ca.run_find_scope(list(scope), kappaD)  # TODO: replace with real findscope arguments when done!
 
-                if len(scope2) < len(scope):
-                    self.run(scope2)
-                else:
-                    delta = join_con_net(delta, kappaD)
+                #if len(scope2) < len(scope):
+                #    self.run(scope2)
+                #else:
+                delta = join_con_net(delta, kappaD)
 
     def generate_findc_query(self, L, delta):
-        # TODO: optimize to work better
         """
         Changes directly the values of the variables
 
@@ -107,35 +109,47 @@ class FindC2(FindCBase):
         :return: Boolean value representing a success or failure on the generation
         """
 
-        tmp = cp.Model(L)
+        tmp = cp.Model(L)        
+
+        satisfied_delta = sum([c for c in delta])  # get the amount of satisfied constraints from B
+
+        scope = get_scope(delta[0])
+        # at least 1 violated and at least 1 satisfied
+        # we want this to assure that each answer of the user will reduce
+        # the set of candidates
+        tmp += satisfied_delta < len(delta)
+        tmp += satisfied_delta > 0
+
 
         max_conj_size = get_max_conjunction_size(delta)
         delta_p = get_delta_p(delta)
 
-        p = cp.intvar(0, max_conj_size)
-        kappa_delta_p = cp.intvar(0, len(delta), shape=(max_conj_size,))
-        p_soft_con = cp.boolvar(shape=(max_conj_size,))
+        for p in range(max_conj_size):
+            s = cp.SolverLookup.get("ortools", tmp)
 
-        for i in range(max_conj_size):
-            tmp += kappa_delta_p[i] == sum([c for c in delta_p[i]])
-            p_soft_con[i] = (kappa_delta_p[i] > 0)
+            kappa_delta_p = sum([c for c in delta_p[p]])
+            s += kappa_delta_p < len(delta_p[p])
+            
 
-        tmp += p == min([i for i in range(max_conj_size) if (kappa_delta_p[i] < len(delta_p[i]))])
+            if not s.solve(): # if a solution is found
+                continue
 
-        objective = sum([c for c in delta])  # get the amount of satisfied constraints from B
+            # Next solve will change the values of the variables in lY
+            # so we need to return them to the original ones to continue if we don't find a solution next
+            values = [x.value() for x in scope]
 
-        # at least 1 violated and at least 1 satisfied
-        # we want this to assure that each answer of the user will reduce
-        # the set of candidates
-        tmp += objective < len(delta)
-        tmp += objective > 0
 
-        # Try first without objective
-        s = cp.SolverLookup.get("ortools", tmp)
+            p_soft_con = (kappa_delta_p > 0)
+            
+            # run with the objective
+            s.maximize(p_soft_con)
 
-        # run with the objective
-        s.minimize(100 * p - p_soft_con[p])
+            # So a solution was found, try to find a better one now
+            s.solution_hint(scope, values)
 
-        flag = s.solve(time_limit=self.time_limit)
+            flag = s.solve(time_limit=self.time_limit, num_workers=8)
+            if not flag:
+                restore_scope_values(scope, values)
+            return True
 
-        return flag
+        return False
