@@ -1,4 +1,5 @@
 from itertools import chain
+import cpmpy as cp
 
 
 def get_max_conjunction_size(C1):
@@ -70,53 +71,72 @@ def join_con_net(C1, C2):
     return C3
 
 
-def remove_redundant_conj(C1):
+def get_conjunction_args(constraint):
+    """
+    Break down a constraint into its constituent conjunctive arguments.
+    
+    Args:
+        constraint: A CPMpy constraint that may contain conjunctions
+        
+    Returns:
+        list: A list of atomic constraints that make up the conjunction
+    """
+    stack = [constraint]
+    conj_args = []
+
+    while stack:
+        current = stack.pop()
+        if current.name == 'and':
+            stack.extend(current.args)
+        else:
+            conj_args.append(current)
+            
+    return conj_args
+
+
+def remove_redundant_conj(constraints: list) -> list:
     """
     Remove redundant conjunctions from the given list of constraints.
-
-    :param C1: A list of constraints.
-    :return: A list of constraints with redundant conjunctions removed.
+    A conjunction is considered redundant if:
+    1. It contains the same set of atomic constraints as another conjunction, or
+    2. It is unsatisfiable
+    
+    Args:
+        constraints: A list of CPMpy constraints, potentially containing conjunctions
+        
+    Returns:
+        list: A filtered list of constraints with redundant conjunctions removed
+        
+    Example:
+        >>> x = cp.intvar(0, 10, "x")
+        >>> constraints = [x >= 0, x >= 0 & x <= 5, x >= 2 & x <= 5]
+        >>> result = remove_redundant_conj(constraints)
+        >>> len(result) < len(constraints)  # Some redundant constraints removed
+        True
     """
-    C2 = list()
+    unique_constraints = []
+    unique_atomic_sets = []
+    
+    for constraint in constraints:
+        # Break down the constraint into atomic parts
+        atomic_constraints = get_conjunction_args(constraint)
+        
+        # Check if this set of atomic constraints is unique
+        is_redundant = any(
+            len(atomic_constraints) == len(existing_set) and 
+            set(atomic_constraints) == set(existing_set)
+            for existing_set in unique_atomic_sets
+        )
+        
+        if not is_redundant:
+            # Verify the constraint is satisfiable
+            try:
+                if cp.Model(constraint).solve():
+                    unique_constraints.append(constraint)
+                    unique_atomic_sets.append(atomic_constraints)
+            except cp.exceptions.UnsatisfiableError:
+                # Skip unsatisfiable constraints
+                continue
+                
+    return unique_constraints
 
-    for c in C1:
-        C = [c]
-        conj_args = []
-
-        while len(C) > 0:
-            c1 = C.pop()
-
-            if c1.name == 'and':
-                [C.append(c2) for c2 in c1.args]
-            else:
-                conj_args.append(c1)
-
-        flag_eq = False
-        flag_neq = False
-        flag_geq = False
-        flag_leq = False
-        flag_ge = False
-        flag_le = False
-
-        for c1 in conj_args:
-            print(c1.name)
-            # Tias is on 3.9, no 'match' please!
-            if c1.name == "==":
-                flag_eq = True
-            elif c1.name == "!=":
-                flag_neq = True
-            elif c1.name == "<=":
-                flag_leq = True
-            elif c1.name == ">=":
-                flag_geq = True
-            elif c1.name == "<":
-                flag_le = True
-            elif c1.name == ">":
-                flag_ge = True
-            else:
-                raise Exception("constraint name is not recognised")
-
-            if not ((flag_eq and (flag_neq or flag_le or flag_ge)) or (
-                    (flag_leq or flag_le) and (flag_geq or flag_ge))):
-                C2.append(c)
-    return C2
