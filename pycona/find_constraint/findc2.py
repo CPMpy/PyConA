@@ -93,12 +93,14 @@ class FindC2(FindCBase):
 
                 kappaD = [c for c in delta if check_value(c) is False]
 
-                #scope2 = self.ca.run_find_scope(list(scope), kappaD)  # TODO: replace with real findscope arguments when done!
+                scope2 = self.ca.run_find_scope(list(scope)) 
 
-                #if len(scope2) < len(scope):
-                #    self.run(scope2)
-                #else:
-                delta = join_con_net(delta, kappaD)
+                if len(scope2) < len(scope):
+                    c = self.run(scope2)
+                    self.ca.add_to_cl(c)
+                    sub_cl.append(c)
+                else:
+                    delta = join_con_net(delta, kappaD)
 
     def generate_findc_query(self, L, delta):
         """
