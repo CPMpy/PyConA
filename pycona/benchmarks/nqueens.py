@@ -3,8 +3,6 @@ from cpmpy.transformations.normalize import toplevel_list
 from ..answering_queries.constraint_oracle import ConstraintOracle
 from ..problem_instance import ProblemInstance, absvar
 
-
-
 def construct_nqueens_problem(n):
 
     parameters = {"n": n}
