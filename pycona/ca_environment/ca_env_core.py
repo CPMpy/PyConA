@@ -92,6 +92,7 @@ class CAEnv(ABC):
         self.instance.cl.extend(C)
         self.instance.bias = list(set(self.instance.bias) - set(C))
 
-        self.metrics.cl += 1
+        self.metrics.cl += len(C)
         if self.verbose == 1:
-            print("L", end="")
+            for c in C:
+                print("L", end="")
