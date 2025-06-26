@@ -76,10 +76,21 @@ class FindC2(FindCBase):
 
                 restore_scope_values(scope, scope_values)
 
+                # Unravel delta nested ands
+                delta_unraveled = []
+                for c in delta:
+                    if c.name == 'and':
+                        sub_list = []
+                        for sub_c in c.args:
+                            sub_list.append(sub_c)
+                        delta_unraveled.append(sub_list)
+                    else:
+                        delta_unraveled.append([c])
+                
                 # Return random c in delta otherwise (if more than one, they are equivalent w.r.t. C_l)
                 # Choose the constraint with the smallest number of conjunctions
-                delta = sorted(delta, key=lambda x: len(x.args))
-                return delta[0]
+                delta_unraveled = sorted(delta_unraveled, key=lambda x: len(x))
+                return delta_unraveled[0]
 
             self.ca.metrics.increase_findc_queries()
 
