@@ -29,6 +29,7 @@ class TestFindScope:
         constraints = toplevel_list(oracle_model.constraints)
 
         instance = ca.ProblemInstance(variables=cp.cpm_array(vars_array))
+        instance.bias = [10 * c + d == 3 * (10 * a + b), 10 * d + a == 2 * (10 * b + c)]
         ca_env = ca.ActiveCAEnv(find_scope=algorithm)
 
         for con in range(len(constraints)):
