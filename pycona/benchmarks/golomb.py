@@ -102,7 +102,9 @@ def construct_golomb(n_marks=8):
     parameters = {"n_marks": n_marks}
 
     # Variables
-    grid = cp.intvar(1, n_marks*4, shape=(1, n_marks), name="grid")
+    grid = cp.intvar(1, n_marks*8, shape=(1, n_marks), name="grid") 
+    # adaptive domain: the larger the domain the slower query generation is
+    # current domain makes it satisfiable up to 12 marks, more marks make it too slow either way
 
     C_T = []
 
@@ -133,5 +135,4 @@ def construct_golomb(n_marks=8):
 
     oracle = ConstraintOracle(list(set(toplevel_list(C_T))))
 
-    print("Target constraints: ", len(oracle.constraints))
     return instance, oracle
