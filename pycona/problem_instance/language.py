@@ -38,7 +38,7 @@ class _AbstracVar(_NumVarImpl):
     def is_bool(self):
         """ is it a Boolean (return type) Operator?
         """
-        return NotImplementedError("Abstract variable is not supposed to be used")
+        return False
 
     def value(self):
         """ the value obtained in the last solve call

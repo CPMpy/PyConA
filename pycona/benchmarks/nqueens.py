@@ -1,0 +1,48 @@
+import cpmpy as cp
+from cpmpy.transformations.normalize import toplevel_list
+from ..answering_queries.constraint_oracle import ConstraintOracle
+from ..problem_instance import ProblemInstance, absvar
+
+def construct_nqueens_problem(n):
+
+    parameters = {"n": n}
+
+    queens = cp.intvar(1, n, shape=n, name="queens")
+
+    # Model
+    model = cp.Model()
+
+    # Constraints list
+    CT = []
+    diag = []
+
+    CT += list(cp.AllDifferent(queens).decompose())
+
+    for i in range(n):
+        for j in range(i + 1, n): # Compare each queen with every other queen once
+            diag += [(queens[i] - i != queens[j] - j)]  # Different major diagonals
+            diag += [(queens[i] + i != queens[j] + j)]  # Different minor diagonals
+
+    # Add all collected constraints to the model
+    model += CT + diag
+
+    C_T = toplevel_list(CT + diag) 
+
+    AV = absvar(2)
+    lang = [AV[0] == AV[1], AV[0] != AV[1], AV[0] < AV[1], AV[0] > AV[1], AV[0] >= AV[1], AV[0] <= AV[1]]
+    #lang = [AV[0] - AV[1] == constant for constant in range(-n, 2*n)] + [AV[0] - AV[1] != constant for constant in range(-n, 2*n)]
+
+    instance = ProblemInstance(variables=queens, params=parameters, language=lang, name="nqueens")
+
+    instance.construct_bias()
+    instance.bias = instance.bias + diag
+
+    oracle = ConstraintOracle(list(set(toplevel_list(C_T))))
+
+    print("oracle constraints: ", len(oracle.constraints))
+    for c in oracle.constraints:
+        print(c)
+
+    input("Press Enter to continue...")
+
+    return instance, oracle

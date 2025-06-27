@@ -112,11 +112,11 @@ class FeaturesRelDim(FeatureRepresentation):
         self._features['Var_name_same'] = 'Bool'
 
         for i in range(self._max_ndims):
+            self._features[f"Dim{i}_same"] = 'Bool'
             self._features[f"Dim{i}_max"] = 'Int'
             self._features[f"Dim{i}_min"] = 'Int'
             self._features[f"Dim{i}_avg"] = 'Real'
             self._features[f"Dim{i}_diff"] = 'Real'
-            self._features[f"Dim{i}_avg_diff"] = 'Real'
 
         self._features[f"Relation"] = self._lang
         self._features[f"Arity"] = 'Real'
