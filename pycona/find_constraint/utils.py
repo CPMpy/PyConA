@@ -65,8 +65,9 @@ def join_con_net(C1, C2):
     :param C2: The second list of constraints.
     :return: A list of constraints resulting from the conjunction of C1 and C2.
     """
-    C3 = [[c1 & c2 if c1 is not c2 else c1 for c2 in C2] for c1 in C1]
+    C3 = [[set(c1 + c2) for c2 in unravel_conjunctions(C2)] for c1 in unravel_conjunctions(C1)]
     C3 = list(chain.from_iterable(C3))
+    C3 = [cp.all(c) for c in C3]
     C3 = remove_redundant_conj(C3)
     return C3
 
@@ -140,3 +141,21 @@ def remove_redundant_conj(constraints: list) -> list:
                 
     return unique_constraints
 
+def unravel_conjunctions(constraints: list) -> list:
+    """
+    Unravel conjunctions in the given list of constraints.
+    """
+    if not isinstance(constraints, list):
+        constraints = [constraints]
+
+    unraveled = []
+    for c in constraints:
+        if c.name == 'and':
+            sub_list = []
+            for sub_c in c.args:
+                sub_list.append(sub_c)
+            unraveled.append(sub_list)
+        else:
+            unraveled.append([c])
+
+    return unraveled

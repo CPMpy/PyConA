@@ -2,9 +2,8 @@ import cpmpy as cp
 import copy
 
 from ..ca_environment.active_ca import ActiveCAEnv
-from .utils import get_max_conjunction_size, get_delta_p
+from .utils import get_max_conjunction_size, get_delta_p, join_con_net, unravel_conjunctions
 from .findc_core import FindCBase
-from .utils import join_con_net
 from ..utils import restore_scope_values, get_con_subset, check_value, get_scope
 
 
@@ -60,13 +59,14 @@ class FindC2(FindCBase):
             Exception: If the target constraint is not in the bias (search space).
         """
         assert self.ca is not None
-
         scope_values = [x.value() for x in scope]
         
         # Initialize delta with constraints from bias that match the scope
         delta = get_con_subset(self.ca.instance.bias, scope)
-        kappaD = [c for c in delta if check_value(c) is False]
+        delta = [c for c in delta if len(get_scope(c)) == len(scope)]
+
         # Join the constraints in delta with the violated constraints in kappaD
+        kappaD = [c for c in delta if check_value(c) is False]
         delta = join_con_net(delta, kappaD)
 
         # Get subset of learned constraints in the current scope
@@ -75,7 +75,6 @@ class FindC2(FindCBase):
         while True:
             # Generate a query to distinguish between candidate constraints
             if self.generate_findc_query(sub_cl, delta) is False:
-
                 # If no example could be generated
                 # Check if delta is the empty set, and if yes then collapse
                 if len(delta) == 0:
@@ -84,15 +83,7 @@ class FindC2(FindCBase):
                 restore_scope_values(scope, scope_values)
 
                 # Unravel nested AND constraints
-                delta_unraveled = []
-                for c in delta:
-                    if c.name == 'and':
-                        sub_list = []
-                        for sub_c in c.args:
-                            sub_list.append(sub_c)
-                        delta_unraveled.append(sub_list)
-                    else:
-                        delta_unraveled.append([c])
+                delta_unraveled = unravel_conjunctions(delta)
                 
                 # Return the smallest equivalent conjunction (if more than one, they are equivalent w.r.t. C_l)
                 delta_unraveled = sorted(delta_unraveled, key=lambda x: len(x))
@@ -110,7 +101,6 @@ class FindC2(FindCBase):
 
                 kappaD = [c for c in delta if check_value(c) is False]
                 scope2 = self.ca.run_find_scope(list(scope)) 
-
                 if len(scope2) < len(scope):
                     # Recursively learn constraint in sub-scope
                     c = self.run(scope2)
