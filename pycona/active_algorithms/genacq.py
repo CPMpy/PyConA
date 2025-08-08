@@ -68,7 +68,6 @@ class GenAcq(AlgorithmCAInteractive):
                 if self.env.verbose >= 1:
                     print(f"\nLearned {self.env.metrics.cl} constraints in "
                           f"{self.env.metrics.total_queries} queries.")
-                self.env.instance.bias = []
                 return self.env.instance
 
             self.env.metrics.increase_generation_time(gen_end - gen_start)

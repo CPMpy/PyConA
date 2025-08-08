@@ -7,7 +7,7 @@ from ..problem_instance import ProblemInstance
 from ..answering_queries import Oracle, UserOracle
 from .. import Metrics
 from ..ca_environment import ProbaActiveCAEnv
-
+from ..utils import get_con_subset
 
 class GrowAcq(AlgorithmCAInteractive):
     """
@@ -66,6 +66,11 @@ class GrowAcq(AlgorithmCAInteractive):
             if verbose >= 2:
                 print(f"\nGrowAcq: calling inner_algorithm for {len(Y)}/{n_vars} variables")
             self.env.instance = self.inner_algorithm.learn(self.env.instance, oracle, verbose=verbose, X=Y, metrics=self.env.metrics)
+
+            # Add implied constraints from bias to cl
+            implied_constraints = get_con_subset(self.env.instance.bias, Y)
+            self.env.instance.cl.extend(implied_constraints)
+            self.env.instance.bias = [c for c in self.env.instance.bias if c not in set(implied_constraints)] # remove implied constraints from bias
 
             if verbose >= 3:
                 print("C_L: ", len(self.env.instance.cl))
