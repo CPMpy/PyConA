@@ -24,9 +24,9 @@ from .metrics import Metrics
 from .answering_queries import ConstraintOracle, UserOracle
 from .ca_environment import ActiveCAEnv, ProbaActiveCAEnv
 from .find_constraint import FindC, FindC2
-from .query_generation import QGen, TQGen, PQGen
+from .query_generation import QGen, TQGen, PQGen, PQGenSolve
 from .find_scope import FindScope, FindScope2
-from .active_algorithms import QuAcq, PQuAcq, MineAcq, GrowAcq, MQuAcq, MQuAcq2, GenAcq
+from .active_algorithms import QuAcq, PQuAcq, MineAcq, GrowAcq, MQuAcq, MQuAcq2, GenAcq, QuAcqSolve
 from .problem_instance import ProblemInstance, absvar, langBasic, langDist, langEqNeq
 from .predictor import CountsPredictor, FeaturesRelDim, FeaturesSimpleRel
 

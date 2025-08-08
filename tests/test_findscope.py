@@ -8,7 +8,6 @@ import cpmpy as cp
 algorithms = [ca.FindScope(), ca.FindScope2()]
 fast_algorithms = [ca.FindScope2()]  # Use only FindScope for fast tests
 
-
 class TestFindScope:
 
     @pytest.mark.parametrize(

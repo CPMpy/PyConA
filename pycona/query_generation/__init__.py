@@ -13,3 +13,4 @@ from .qgen_core import QGenBase
 from .qgen import QGen
 from .tqgen import TQGen
 from .pqgen import PQGen
+from .pqgen_solve import PQGenSolve

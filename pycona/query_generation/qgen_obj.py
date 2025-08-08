@@ -46,3 +46,23 @@ def obj_proba(B, ca_env: ActiveCAEnv, **kwargs):
          c, o_c in zip(B, O_c)])
 
     return objective
+
+def obj_proba_solve(B, ca_env: ActiveCAEnv, **kwargs):
+    """
+    Probability-based objective function for solve.
+
+    :param B: A list of constraints.
+    :param ca_env: An instance of ActiveCAEnv.
+    :return: The probability-based objective function for solve.
+    :raises Exception: If ca_environment is not an instance of ProbaActiveCAEnv.
+    """
+    if not isinstance(ca_env, ProbaActiveCAEnv):
+        raise Exception('Probability based objective can only be used with ProbaActiveCAEnv')
+
+    proba = {c: ca_env.bias_proba[c] for c in B}
+
+    objective = sum(
+        [c * proba[c] for
+         c in proba])
+
+    return objective
