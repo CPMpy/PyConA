@@ -77,5 +77,19 @@ class TestFinC:
         learned_not_oracle += cp.any([~c for c in oracle.constraints])
         assert not learned_not_oracle.solve()
 
+        # test growacq
+        alg = ca.GrowAcq(ca_env, alg)
+        li2 = alg.learn(instance, oracle)
+
+        # oracle model imply learned?
+        oracle_not_learned = cp.Model(oracle.constraints)
+        oracle_not_learned += cp.any([~c for c in li2._cl])
+        assert not oracle_not_learned.solve()
+
+        # learned model imply oracle?
+        learned_not_oracle = cp.Model(li2._cl)
+        learned_not_oracle += cp.any([~c for c in oracle.constraints])
+        assert not learned_not_oracle.solve()
+
 
     
