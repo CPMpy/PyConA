@@ -67,6 +67,10 @@ class GrowAcq(AlgorithmCAInteractive):
                 print(f"\nGrowAcq: calling inner_algorithm for {len(Y)}/{n_vars} variables")
             self.env.instance = self.inner_algorithm.learn(self.env.instance, oracle, verbose=verbose, X=Y, metrics=self.env.metrics)
 
+            # Add implied constraints from bias to cl
+            self.env.instance.cl.extend(self.env.instance.bias)
+            self.env.instance.bias = [] # clear bias
+
             if verbose >= 3:
                 print("C_L: ", len(self.env.instance.cl))
                 print("B: ", len(self.env.instance.bias))
