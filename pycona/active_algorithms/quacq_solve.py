@@ -7,6 +7,7 @@ from ..ca_environment.active_ca import ActiveCAEnv
 from ..ca_environment.acive_ca_proba import ProbaActiveCAEnv
 from ..utils import get_kappa
 from .. import Metrics
+from ..query_generation import PQGenSolve
 
 
 class QuAcqSolve(AlgorithmCAInteractive):
@@ -20,7 +21,7 @@ class QuAcqSolve(AlgorithmCAInteractive):
 
         :param ca_env: An instance of ActiveCAEnv, default is None.
         """
-        env = ca_env if ca_env is not None else ProbaActiveCAEnv()
+        env = ca_env if ca_env is not None else ProbaActiveCAEnv(qgen=PQGenSolve())
         super().__init__(env)
 
     def learn(self, instance: ProblemInstance, oracle: Oracle = UserOracle(), verbose=0, X=None, metrics: Metrics = None):

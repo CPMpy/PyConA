@@ -23,8 +23,8 @@ class Objectives:
 
         :return: List of query generation objectives.
         """
-        from .query_generation.qgen_obj import obj_max_viol, obj_min_viol, obj_proba
-        return [obj_max_viol, obj_min_viol, obj_proba]
+        from .query_generation.qgen_obj import obj_max_viol, obj_min_viol, obj_proba, obj_proba_solve
+        return [obj_max_viol, obj_min_viol, obj_proba, obj_proba_solve]
 
     @classmethod
     def findscope_objectives(cls):
