@@ -3,7 +3,7 @@ from cpmpy.transformations.normalize import toplevel_list
 from ..answering_queries.constraint_oracle import ConstraintOracle
 from ..problem_instance import ProblemInstance, absvar
 
-def construct_nqueens_problem(n):
+def construct_nqueens_problem(n=8):
 
     parameters = {"n": n}
 
@@ -42,7 +42,5 @@ def construct_nqueens_problem(n):
     print("oracle constraints: ", len(oracle.constraints))
     for c in oracle.constraints:
         print(c)
-
-    input("Press Enter to continue...")
 
     return instance, oracle

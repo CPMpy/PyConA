@@ -11,7 +11,7 @@ from sklearn.ensemble import RandomForestClassifier
 # Modify the problem generators for fast tests
 fast_problem_generators = [construct_murder_problem()]  # Keep only the smallest problem
 
-problem_generators = [construct_murder_problem(), construct_examtt_simple(), construct_nurse_rostering()]
+problem_generators = [construct_murder_problem(), construct_examtt_simple(3,3,3,6), construct_nurse_rostering(3,3,6,1)]
 
 classifiers = [DecisionTreeClassifier(), RandomForestClassifier()]
 algorithms = [ca.QuAcq(), ca.MQuAcq(), ca.MQuAcq2(), ca.MineAcq(), ca.PQuAcq(), ca.GenAcq()]
@@ -32,7 +32,6 @@ def _generate_base_inputs(fast=False):
         combs = product(_generate_benchmarks(), algorithms)
     for comb in combs:
         yield comb
-
 
 def _generate_proba_inputs(fast=False):
     if fast:
@@ -116,6 +115,7 @@ class TestAlgorithms:
         (instance, oracle) = bench
         # Create a copy of the instance to avoid modifying the original
         instance = instance.copy()
+        env = ca.ActiveCAEnv()
         
         # Get some constraints from the oracle's constraint set
         initial_constraints = oracle.constraints[:len(oracle.constraints)//2]  # Take half of the constraints
@@ -123,6 +123,7 @@ class TestAlgorithms:
         initial_cl_size = len(instance.cl)
         
         ca_system = algorithm
+        ca_system.env = env
         learned_instance = ca_system.learn(instance=instance, oracle=oracle)
         assert ca_system.env.metrics.converged
         assert learned_instance.get_cpmpy_model().solve()
@@ -162,7 +163,8 @@ class TestAlgorithms:
         (instance, oracle) = bench
         # Create a copy of the instance to avoid modifying the original
         instance = instance.copy()
-        
+        env = ca.ActiveCAEnv()
+
         # Generate bias constraints for the instance
         instance.construct_bias()
         # Separate constraints into those from oracle and others
@@ -172,6 +174,7 @@ class TestAlgorithms:
         instance.bias = list(oracle_constraints) + other_constraints[:len(other_constraints)//2]
         
         ca_system = algorithm
+        ca_system.env = env
         learned_instance = ca_system.learn(instance=instance, oracle=oracle)
         assert len(learned_instance.cl) > 0
         assert learned_instance.get_cpmpy_model().solve()

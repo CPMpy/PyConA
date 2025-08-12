@@ -28,6 +28,9 @@ def split_proba(Y, R, kappaB, P_c, **kwargs):
     :param kwargs: Additional keyword arguments.
     :return: Two subsets of Y.
     """
+    if len(kappaB) > 10000:
+        return split_half(Y)
+    
     hashY = [hash(y) for y in Y]
     hashR = [hash(r) for r in R]
 
@@ -35,7 +38,7 @@ def split_proba(Y, R, kappaB, P_c, **kwargs):
 
     model = cp.Model()
 
-    constraints_Y1 = sum((1 - 10 * ((1 / P_c[i]) <= math.log2(len(Y)))) *
+    constraints_Y1 = sum((1 - 10 * ((1 / P_c[kappaB[i]]) <= math.log2(len(Y)))) *
                          all(hash(scope_var) in hashR or x[hashY.index(hash(scope_var))]
                              for scope_var in get_scope(kappaB[i]))
                          for i in range(len(kappaB)))
@@ -46,8 +49,8 @@ def split_proba(Y, R, kappaB, P_c, **kwargs):
     model += Y1_size > 0
 
     model.maximize(constraints_Y1)
-
-    model.solve()
+    
+    model.solve(time_limit=1)
 
     Y1 = [Y[i] for i in range(len(Y)) if x[i].value()]
     Y2 = list(set(Y) - set(Y1))

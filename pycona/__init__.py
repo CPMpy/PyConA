@@ -18,7 +18,7 @@ Helper:
     utils: Contains utility functions used across submodules.
 """
 
-__version__ = "0.3"
+__version__ = "0.4.1"
 
 from .metrics import Metrics
 from .answering_queries import ConstraintOracle, UserOracle

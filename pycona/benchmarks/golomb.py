@@ -129,7 +129,7 @@ def construct_golomb(n_marks=8):
     AV = absvar(4)  # create abstract vars - as many as maximum arity
 
     # create abstract relations using the abstract vars
-    lang = [AV[0] == AV[1], AV[0] != AV[1], AV[0] < AV[1], AV[0] > AV[1], AV[0] >= AV[1], AV[0] <= AV[1], cp.abs(AV[0] - AV[1]) != cp.abs(AV[2] - AV[3])]
+    lang = [AV[0] == AV[1], AV[0] != AV[1], AV[0] < AV[1], AV[0] > AV[1], AV[0] >= AV[1], AV[0] <= AV[1], cp.abs(AV[0] - AV[1]) != cp.abs(AV[2] - AV[3]), cp.abs(AV[0] - AV[1]) == cp.abs(AV[2] - AV[3])]
 
     instance = GolombInstance(variables=grid, params=parameters, language=lang, name="golomb")
 
