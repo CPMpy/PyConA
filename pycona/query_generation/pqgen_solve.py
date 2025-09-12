@@ -142,7 +142,7 @@ class PQGenSolve(QGenBase):
         if self.env.verbose > 2:
             print("Solving with objective...")
 
-        flag2 = s.solve(time_limit=(self.time_limit - t1), num_workers=8)
+        flag2 = s.solve(time_limit=(self.time_limit), num_workers=8)
 
         print("flag2: ", flag2)
         print("objective value: ", objective.value())
