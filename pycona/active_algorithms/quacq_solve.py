@@ -8,7 +8,7 @@ from ..ca_environment.acive_ca_proba import ProbaActiveCAEnv
 from ..utils import get_kappa
 from .. import Metrics
 from ..query_generation import PQGenSolve
-
+import random
 
 class QuAcqSolve(AlgorithmCAInteractive):
     """
@@ -75,10 +75,14 @@ class QuAcqSolve(AlgorithmCAInteractive):
                 self.env.remove_from_bias(kappaB)
                 if len(Y) == len(self.env.instance.X):
                     print("Found a solution")
+                    self.env.metrics.finalize_statistics()
+                    if self.env.verbose >= 1:
+                        print(f"\nLearned {self.env.metrics.cl} constraints in "
+                              f"{self.env.metrics.membership_queries_count} queries.")
                     return self.env.instance
 
-            else:  # user says UNSAT
-
+            else:  # user say UNSAT
+                random.shuffle(Y)
                 scope = self.env.run_find_scope(Y)
                 c = self.env.run_findc(scope)
                 self.env.add_to_cl(c)
