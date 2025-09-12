@@ -9,4 +9,4 @@ Initializes this module, with implementations of different predictors and featur
 """
 
 from .predictor import CountsPredictor
-from .feature_representation import FeaturesSimpleRel, FeaturesRelDim, FeatureRepresentation
+from .feature_representation import FeaturesSimpleRel, FeaturesRelDim, FeatureRepresentation, FeaturesRelDimBlock
