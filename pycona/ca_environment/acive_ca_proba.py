@@ -1,9 +1,10 @@
 from cpmpy.expressions.core import Expression
 
 from ..predictor import CountsPredictor
-from ..predictor.feature_representation import FeatureRepresentation, FeaturesRelDim, FeaturesSimpleRel
+from ..predictor.feature_representation import FeatureRepresentation, FeaturesRelDim, FeaturesRelDimBlock, FeaturesSimpleRel
 from .active_ca import ActiveCAEnv
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 
 class ProbaActiveCAEnv(ActiveCAEnv):
@@ -244,13 +245,22 @@ class ProbaActiveCAEnv(ActiveCAEnv):
 
     def _train_classifier(self):
         """ Train the classifier with the dataset of learned and excluded constraints """
+        print("Training classifier with dataset of size: ", len(self.datasetX))
         self.classifier.fit(self.datasetX, self.datasetY)
         self.classifier_trained = True
 
     def _predict_bias_proba(self):
         """ Predict the probabilities of candidate constraints using the trained classifier """
+        if self.verbose > 2:
+            print("Predicting bias probabilities...")
+
         if self._classifier_trained:
-            featuresB = {c: self.feature_representation.featurize_constraint(c) for c in self.instance.bias}
-            self.bias_proba = {c: self.classifier.predict_proba([featuresB[c]])[0][1]+0.01 for c in self.instance.bias}
+            features_list = self.feature_representation.featurize_constraints(self.instance.bias)
+            # Batch predict probabilities for all constraints
+            if features_list:
+                probas = self.classifier.predict_proba(features_list)
+                # Create dictionary mapping constraints to their probabilities
+                self.bias_proba = {c: proba[1] + 0.01 for c, proba in zip(self.instance.bias, probas)}
         else:
             self.bias_proba = {c: 0.01 for c in self.instance.bias}
+
