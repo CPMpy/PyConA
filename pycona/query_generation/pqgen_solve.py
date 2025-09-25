@@ -108,7 +108,21 @@ class PQGenSolve(QGenBase):
 
         if len(B) > self.blimit:
             # Sort constraints by probability and take first 5000 with highest probability
+
             B = sorted(B, key=lambda c: self.env.bias_proba[c], reverse=True)[:2000]
+            
+            print("Probabilities of true constraints: -------------------------")
+            oracle_correct_pred = 0
+            for c in self.env.oracle.constraints:
+                if c in set(B):
+                    print(f"Proba of constraint {c}: {self.env.bias_proba[c]}")
+                    if self.env.bias_proba[c] > 0.5:
+                        oracle_correct_pred += 1
+            print(f"Number of true constraints in C_T with probability > 0.5: {oracle_correct_pred}")
+
+            # Find indices of max probability constraints after sorting
+            max_prob_indices = [i for i, c in enumerate(B) if self.env.bias_proba[c] > 0.5]
+            print(f"After sorting - Number of constraints with probability > 0.5: {len(max_prob_indices)}")            
 
         # We want at least one constraint to be violated to assure that each answer of the user
         # will lead to new information
@@ -145,6 +159,8 @@ class PQGenSolve(QGenBase):
         flag2 = s.solve(time_limit=(self.time_limit), num_workers=8)
 
         print("flag2: ", flag2)
+        print("min proba: ", min(self.env.bias_proba[c] for c in B))
+        print("max proba: ", max(self.env.bias_proba[c] for c in B))
         print("objective value: ", objective.value())
 
         if flag2:
