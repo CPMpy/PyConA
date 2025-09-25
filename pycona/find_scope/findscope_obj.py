@@ -1,7 +1,7 @@
 import math
 import cpmpy as cp
 
-from ..utils import get_scope
+from ..utils import get_scope, restore_scope_values
 
 
 def split_half(Y, **kwargs):
@@ -38,21 +38,39 @@ def split_proba(Y, R, kappaB, P_c, **kwargs):
 
     model = cp.Model()
 
-    constraints_Y1 = sum((1 - 10 * ((1 / P_c[kappaB[i]]) <= math.log2(len(Y)))) *
-                         all(hash(scope_var) in hashR or x[hashY.index(hash(scope_var))]
-                             for scope_var in get_scope(kappaB[i]))
-                         for i in range(len(kappaB)))
-
     Y1_size = sum(x)
 
     model += Y1_size <= (len(Y) + 1) // 2
     model += Y1_size > 0
 
-    model.maximize(constraints_Y1)
-    
-    model.solve(time_limit=1)
+    s = cp.SolverLookup.get("ortools", model)
 
+    if not s.solve():
+        raise Exception("No solution found in split_proba of findscope, please report an issue")
+
+    # Next solve will change the values of the variables in x
+    # so we need to return them to the original ones to continue if we don't find a solution next
+    values = [x.value() for x in x]
+
+    # So a solution was found, try to find a better one now
+    s.solution_hint(x, values)
+
+    constraints_Y1 = [cp.all(hash(scope_var) in set(hashR) or x[hashY.index(hash(scope_var))]
+                             for scope_var in get_scope(kappaB[i]))
+                         for i in range(len(kappaB))]
+    
+    objective = sum((1 - 10 * P_c[kappaB[i]]) *
+                    constraints_Y1[i]
+                    for i in range(len(kappaB)))
+    
+    s.maximize(objective)
+    
+    flag = s.solve(time_limit=1)
+
+    if not flag:
+        restore_scope_values(x, values)
+    
     Y1 = [Y[i] for i in range(len(Y)) if x[i].value()]
     Y2 = list(set(Y) - set(Y1))
-
+    
     return Y1, Y2
