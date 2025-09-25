@@ -4,13 +4,13 @@ from ..answering_queries.constraint_oracle import ConstraintOracle
 from ..problem_instance import ProblemInstance, absvar
 
 
-def construct_sudoku(block_size_row=2, block_size_col=2, grid_size=4):
+def construct_latin_squares(grid_size=4):
     """
     :return: a ProblemInstance object, along with a constraint-based oracle
     """
 
     # Create a dictionary with the parameters
-    parameters = {"block_size_row": block_size_row, "block_size_col": block_size_col, "grid_size": grid_size}
+    parameters = {"grid_size": grid_size}
 
     # Variables
     grid = cp.intvar(1, grid_size, shape=(grid_size, grid_size), name="grid")
@@ -24,11 +24,6 @@ def construct_sudoku(block_size_row=2, block_size_col=2, grid_size=4):
     for col in grid.T:  # numpy's Transpose
         model += cp.AllDifferent(col).decompose()
 
-    # Constraints on blocks
-    for i in range(0, grid_size, block_size_row):
-        for j in range(0, grid_size, block_size_col):
-            model += cp.AllDifferent(grid[i:i + block_size_row, j:j + block_size_col]).decompose()  # python's indexing
-
     C_T = list(set(toplevel_list(model.constraints)))
 
     # Create the language:
@@ -37,7 +32,7 @@ def construct_sudoku(block_size_row=2, block_size_col=2, grid_size=4):
     # create abstract relations using the abstract vars
     lang = [AV[0] == AV[1], AV[0] != AV[1], AV[0] < AV[1], AV[0] > AV[1], AV[0] >= AV[1], AV[0] <= AV[1]]
 
-    instance = ProblemInstance(variables=grid, params=parameters, language=lang, name=f"sudoku_{block_size_row}_{block_size_col}_{grid_size}")
+    instance = ProblemInstance(variables=grid, params=parameters, language=lang, name=f"latin_squares_{grid_size}")
 
     oracle = ConstraintOracle(C_T)
 

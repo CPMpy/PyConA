@@ -7,3 +7,4 @@ from .nurse_rostering import construct_nurse_rostering
 from .zebra import construct_zebra_problem
 from .nqueens import construct_nqueens_problem
 from .golomb import construct_golomb
+from .latin_squares import construct_latin_squares
