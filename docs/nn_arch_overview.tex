@@ -1,0 +1,87 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\title{Few-Shot Constraint Classification without Manual Feature Engineering}
+\author{PyConA Prototype}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Problem}
+We consider \emph{few-shot} classification of constraints within a given constraint satisfaction problem (CSP) instance. For a new instance, only a small subset of constraints are labeled as ``in-problem'' (positive) or ``not-in-problem'' (negative). The goal is to classify the remaining constraints.
+
+Key challenges:
+\begin{itemize}[noitemsep]
+  \item Per-instance vocabularies: variable names and index ranges differ per problem.
+  \item Class imbalance: positives are usually rare.
+  \item Avoid manual feature engineering (e.g., hand-coded ``same row/column'').
+\end{itemize}
+
+\section{Data Representation}
+Each constraint is represented as a tuple
+\( (r, [(v_1, \mathbf{i}_1), \dots, (v_k, \mathbf{i}_k)]) \),
+where $r$ is the relation/operator, $v_j$ are variable identifiers (names), and $\mathbf{i}_j$ are index vectors (e.g., row/column). For each episode/problem we:
+\begin{itemize}[noitemsep]
+  \item Build a \emph{per-episode} mapping from variable names to compact IDs (avoids global vocab dependencies).
+  \item Normalize integer indices to $[0,1]$ using the maximum index observed in that problem.
+  \item Split labeled examples into a \textbf{support} set (few labeled) and a disjoint \textbf{query} set.
+\end{itemize}
+
+\section{Model Architecture}
+We use a \textbf{slot-based encoder} that produces a dense embedding for each constraint without manual features:
+\begin{enumerate}[noitemsep]
+  \item \textbf{Slot construction}: for each variable $v_j$ we form a slot embedding as the sum of:
+  \begin{itemize}[noitemsep]
+    \item a learned embedding of the per-episode variable ID of $v_j$;
+    \item an aggregated embedding over index dimensions produced by a small \emph{shared MLP} that maps normalized index values to vectors (one MLP shared across all dimensions/variables), plus learned dimension-position embeddings.
+  \end{itemize}
+  \item \textbf{Sequence and relation token}: we prepend a learned relation embedding to the sequence of variable slots, forming $[\mathrm{REL}] + [\mathrm{SLOT}_1,\dots,\mathrm{SLOT}_k]$.
+  \item \textbf{Transformer encoder}: a lightweight Transformer encodes this sequence. We add (i) standard absolute position embeddings and (ii) a \emph{relative-position bias} term $b_{i-j}$ to attention logits to reduce sensitivity to arbitrary slot ordering and improve pairwise comparison between slots.
+  \item \textbf{Pooling}: masked mean-pooling over the sequence (including the relation token) yields the final constraint embedding $\mathbf{z}\in\mathbb{R}^d$, L2-normalized.
+\end{enumerate}
+
+This design provides a minimal, task-agnostic inductive bias: the network sees variable identity and continuous index values and learns patterns such as equality or index differences from data, without hand-coded features.
+
+\section{Few-Shot Learning Objective}
+We adopt a prototypical/metric-learning objective with cosine similarity:
+\begin{itemize}[noitemsep]
+  \item Build class prototypes from support embeddings by averaging positives and negatives separately.
+  \item Classify query embeddings by softmax over scaled cosine similarities to the prototypes (temperature controls logit scaling).
+  \item Train episodically across problems to encourage per-instance adaptation.
+\end{itemize}
+
+\section{Evaluation Protocols}
+We report two complementary evaluations:
+\begin{itemize}[noitemsep]
+  \item \textbf{Episodic evaluation}: repeated random episodes per problem with balanced support/query to monitor stability (loss/accuracy).
+  \item \textbf{Few-shot holdout}: per problem, take a small fraction (e.g., 5\%) \emph{per class} as support and classify the rest. We aggregate accuracy, precision, recall, and $\mathrm{F1}$ (positive, macro, weighted). Optionally, we use a transductive refinement of prototypes through soft assignments on the query set.
+\end{itemize}
+
+\section{Baselines and Comparisons}
+For reference, we include a classical baseline using a decision tree trained on \texttt{FeaturesRelDim} (a well-engineered relational/dimensional feature representation). This baseline often yields high $\mathrm{F1}$ in imbalanced few-shot settings. Our neural approach aims to match its performance while avoiding manual feature engineering and enabling transfer across problem families through learned representations.
+
+\section{Design Choices and Rationale}
+\begin{itemize}[noitemsep]
+  \item \textbf{Per-episode vocabularies}: avoid global OOV issues and encourage per-instance adaptation.
+  \item \textbf{Continuous index encoding}: a shared MLP over normalized indices, rather than discrete index tokens, allows the model to learn smooth relational cues (e.g., differences) from data.
+  \item \textbf{Relative-position bias}: improves pairwise reasoning over unordered variable slots in a generic way.
+  \item \textbf{Cosine metric with temperature}: stabilizes few-shot classification and decouples confidence calibration from raw embedding norms.
+\end{itemize}
+
+\section{Practical Notes}
+\begin{itemize}[noitemsep]
+  \item Increase model capacity (embedding size, layers) and support shots for harder problems.
+  \item Tune temperature and the fraction of labeled positives for better $\mathrm{F1}$ under imbalance.
+  \item Use per-problem threshold tuning (on support) if deployment optimizes a specific precision/recall trade-off.
+\end{itemize}
+
+\section{Summary}
+We present a few-shot, structure-aware neural encoder for constraints that learns from raw variable identifiers and index values, augmented with relative-position bias, and trained with a prototypical objective. This minimizes hand-crafted features while enabling per-instance adaptation, with evaluation protocols reflecting the real scenario (small labeled support, large unlabeled remainder, and class imbalance).
+
+\end{document}
+
+
