@@ -28,6 +28,6 @@ from .query_generation import QGen, TQGen, PQGen, PQGenSolve
 from .find_scope import FindScope, FindScope2
 from .active_algorithms import QuAcq, PQuAcq, MineAcq, GrowAcq, MQuAcq, MQuAcq2, GenAcq, QuAcqSolve
 from .problem_instance import ProblemInstance, absvar, langBasic, langDist, langEqNeq
-from .predictor import CountsPredictor, FeaturesRelDim, FeaturesSimpleRel
+from .predictor import CountsPredictor, FeaturesRelDim, FeaturesSimpleRel, FeaturesRelDimBlock
 
 from .utils import Objectives
