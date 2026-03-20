@@ -51,14 +51,23 @@ class GrowAcq(AlgorithmCAInteractive):
         self.inner_algorithm.env = copy.copy(self.env)
 
         Y = []
+        init_bias = list(self.env.instance.bias)
+        init_bias_provided = len(init_bias) > 0
 
         n_vars = len(X)
         for x in X:
-            # we 'grow' the inner bias by adding one extra variable at a time
+            # we 'grow' the considered part of the problem by adding one extra variable at a time
             Y.append(x)
-            # add the constraints involving x and other added variables
-            if len(self.env.instance.bias) == 0:
+            # Add candidate constraints for the new frontier.
+            # - If an initial bias is provided, only reveal newly visible constraints
+            # - Otherwise, generate constraints incrementally from the language
+            if init_bias_provided:
+                visible_now = set(get_con_subset(init_bias, Y))
+                self.env.instance.bias = list(visible_now)
+                init_bias = set(init_bias) - visible_now
+            else:
                 self.env.instance.construct_bias_for_vars(x, Y)
+                
             if verbose >= 3:
                 print(f"Added variable {x} in GrowAcq")
                 print("size of B in growacq: ", len(self.env.instance.bias))
