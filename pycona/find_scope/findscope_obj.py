@@ -39,7 +39,7 @@ def split_proba(Y, R, kappaB, P_c, **kwargs):
     model = cp.Model()
 
     constraints_Y1 = sum((1 - 10 * ((1 / P_c[kappaB[i]]) <= math.log2(len(Y)))) *
-                         all(hash(scope_var) in hashR or x[hashY.index(hash(scope_var))]
+                         cp.all(hash(scope_var) in hashR or x[hashY.index(hash(scope_var))]
                              for scope_var in get_scope(kappaB[i]))
                          for i in range(len(kappaB)))
 
