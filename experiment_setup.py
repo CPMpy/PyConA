@@ -91,7 +91,7 @@ def construct_benchmark(config: ExperimentConfig) -> Tuple[any, any]:
     elif config.benchmark == 'nurse_rostering_normal':
         instance, oracle = construct_nurse_rostering(3, 7, 18, 5)
     elif config.benchmark == 'exam_timetable':
-        instance, oracle = construct_examtt_simple()
+        instance, oracle = construct_examtt_simple(9,6,9,14)
     elif config.benchmark == 'latin_square':
         instance, oracle = construct_latin_squares(10)
     elif config.benchmark == 'zebra':
