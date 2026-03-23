@@ -97,7 +97,7 @@ class QuAcqSolve(AlgorithmCAInteractive):
                 # it is a solution, so all candidates violated must go
                 # B <- B \setminus K_B(e)
                 self.env.remove_from_bias(kappaB)
-                if len(Y) == len(self.env.instance.X):
+                if len(Y) == len(X):
                     print("Found a solution")
                     self.env.metrics.finalize_statistics()
                     if self.env.verbose >= 1:
