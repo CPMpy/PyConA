@@ -4,7 +4,7 @@ from ..answering_queries.constraint_oracle import ConstraintOracle
 from ..problem_instance import ProblemInstance, absvar
 
 
-def construct_latin_squares(grid_size=4):
+def construct_latin_squares(grid_size=10):
     """
     :return: a ProblemInstance object, along with a constraint-based oracle
     """
