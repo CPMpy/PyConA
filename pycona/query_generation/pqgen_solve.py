@@ -105,6 +105,7 @@ class PQGenSolve(QGenBase):
 
         m = cp.Model(Cl)
         s = cp.SolverLookup.get("ortools", m)
+        s.user_vars = set(X)
 
         if len(B) > self.blimit:
             # Sort constraints by probability and take first 5000 with highest probability
@@ -158,12 +159,13 @@ class PQGenSolve(QGenBase):
         else: # no solution was found with the most probable constraints, so we need to solve with the original constraints
             m = cp.Model(Cl)
             s = cp.SolverLookup.get("ortools", m)
+            s.user_vars = set(X)
             restore_scope_values(X, values)
 
         ### Third solve with objective ###
         if self.time_limit - t2 <= 0:
             return X
-            
+
         if self.env.verbose > 2:
             print("Solving with objective...")
 
