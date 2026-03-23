@@ -1,0 +1,16 @@
+{
+  "benchmark": [
+    "sudoku",
+    "exam_timetable",
+    "nurse_rostering",
+    "nurse_rostering_normal",
+    "gtsudoku",
+    "latin_square",
+    "zebra",
+    "murder"
+  ],
+  "algorithm": ["adagrowacq"],
+  "n_runs": [25],
+  "adaptive_grow": [3],
+  "verbose": [0]
+}

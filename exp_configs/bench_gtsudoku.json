@@ -1,0 +1,14 @@
+{
+  "benchmark": ["gtsudoku"],
+  "algorithm": [
+    "growacq",
+    "quacq",
+    "adagrowacq",
+    "quacq_solve",
+    "growacq_solve",
+    "adagrowacq_solve"
+  ],
+  "n_runs": [25],
+  "adaptive_grow": [3],
+  "verbose": [0]
+}
