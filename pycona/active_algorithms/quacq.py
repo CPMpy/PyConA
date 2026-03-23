@@ -1,5 +1,5 @@
 import time
-
+import random
 from .algorithm_core import AlgorithmCAInteractive
 from ..problem_instance import ProblemInstance
 from ..answering_queries import Oracle, UserOracle
@@ -72,7 +72,7 @@ class QuAcq(AlgorithmCAInteractive):
                 self.env.remove_from_bias(kappaB)
 
             else:  # user says UNSAT
-
+                random.shuffle(Y)
                 scope = self.env.run_find_scope(Y)
                 c = self.env.run_findc(scope)
                 self.env.add_to_cl(c)
