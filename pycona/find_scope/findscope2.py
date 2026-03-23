@@ -78,7 +78,7 @@ class FindScope2(FindScopeBase):
 
         # Create Y1, Y2 -------------------------
         proba = self.ca.bias_proba if hasattr(self.ca, 'bias_proba') else []
-        Y1, Y2 = self.split_func(Y=Y, R=R, kappaB=kappaBRY, P_c=proba)
+        Y1, Y2 = self.split_func(Y=Y, R=R, kappaB=kappaBRY, P_c=proba, time_limit=self.time_limit)
 
         S1 = set()
         S2 = set()

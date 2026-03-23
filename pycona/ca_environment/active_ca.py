@@ -50,6 +50,10 @@ class ActiveCAEnv(CAEnv):
         self.find_scope.ca = self
         self.findc.ca = self
 
+        # Reset optional query-generator internal state between independent runs
+        if hasattr(self.qgen, "reset_partial") and callable(self.qgen.reset_partial):
+            self.qgen.reset_partial()
+
     def run_query_generation(self, Y=None):
         """ Run the query generation process. """
         Y = self.qgen.generate(Y)

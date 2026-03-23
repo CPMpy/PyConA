@@ -26,7 +26,7 @@ class FindScope(FindScopeBase):
         :return: The scope of the partial example.
         """
         assert self.ca is not None
-        scope = self._find_scope(set(), Y, do_ask=False)
+        scope = self._find_scope(set(), list(Y), do_ask=False)
         return scope
 
     def _find_scope(self, R, Y, do_ask):

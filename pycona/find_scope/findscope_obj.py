@@ -31,6 +31,8 @@ def split_proba(Y, R, kappaB, P_c, **kwargs):
     if len(kappaB) > 10000:
         return split_half(Y)
     
+    time_limit = kwargs.get('time_limit', 1)
+
     hashY = [hash(y) for y in Y]
     hashR = [hash(r) for r in R]
 
@@ -50,7 +52,7 @@ def split_proba(Y, R, kappaB, P_c, **kwargs):
 
     model.maximize(constraints_Y1)
     
-    model.solve(time_limit=1)
+    model.solve(time_limit=time_limit)
 
     Y1 = [Y[i] for i in range(len(Y)) if x[i].value()]
     Y2 = list(set(Y) - set(Y1))
