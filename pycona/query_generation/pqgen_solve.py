@@ -14,7 +14,7 @@ class PQGenSolve(QGenBase):
     Dimos Tsouros, Senne Berden, and Tias Guns. "Guided Bottom-Up Interactive Constraint Acquisition." CP, 2023
     """
 
-    def __init__(self, ca_env: ActiveCAEnv = None, *, objective_function=None, time_limit=10, blimit=5000):
+    def __init__(self, ca_env: ActiveCAEnv = None, *, objective_function=None, time_limit=3, blimit=5000):
         """
         Initialize the PQGen with the given parameters.
 
@@ -83,8 +83,6 @@ class PQGenSolve(QGenBase):
         if X is None:
             X = self.env.instance.X
         B = get_con_subset(self.env.instance.bias, X)
-        # Start time (for the cutoff t)
-        t0 = time.time()
 
         # Project down to only vars in scope of B
         #Y = frozenset(get_variables(B))
@@ -132,11 +130,14 @@ class PQGenSolve(QGenBase):
         if self.env.verbose > 2:
             print("Solving first without objective (to find at least one solution)...")
 
+        # Start time (for the cutoff t)
+        t0 = time.time()
         # Solve first without objective (to find at least one solution)
         flag = s.solve(num_workers=8)
 
         t1 = time.time() - t0
         if not flag or (t1 > self.time_limit):
+            print("UNSAT or already above time_limit, stop here --- cannot optimize")
             # UNSAT or already above time_limit, stop here --- cannot optimize
             return X if flag else set()
 
