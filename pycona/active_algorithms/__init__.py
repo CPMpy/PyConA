@@ -15,3 +15,4 @@ from .pquacq import PQuAcq
 from .mineacq import MineAcq
 from .genacq import GenAcq
 from .quacq_solve import QuAcqSolve
+from .adagrowacq import AdaGrowAcq
