@@ -109,20 +109,20 @@ class PQGenSolve(QGenBase):
         if len(B) > self.blimit:
             # Sort constraints by probability and take first 5000 with highest probability
 
-            B = sorted(B, key=lambda c: self.env.bias_proba[c], reverse=True)[:2000]
+            B = sorted(B, key=lambda c: self.env.bias_proba[c], reverse=True)[:self.blimit]
             
             print("Probabilities of true constraints: -------------------------")
             oracle_correct_pred = 0
             for c in self.env.oracle.constraints:
                 if c in set(B):
-                    print(f"Proba of constraint {c}: {self.env.bias_proba[c]}")
+                    #print(f"Proba of constraint {c}: {self.env.bias_proba[c]}")
                     if self.env.bias_proba[c] > 0.5:
                         oracle_correct_pred += 1
             print(f"Number of true constraints in C_T with probability > 0.5: {oracle_correct_pred}")
 
             # Find indices of max probability constraints after sorting
-            max_prob_indices = [i for i, c in enumerate(B) if self.env.bias_proba[c] > 0.5]
-            print(f"After sorting - Number of constraints with probability > 0.5: {len(max_prob_indices)}")            
+        max_prob_constraints = {i: c for i, c in enumerate(B) if self.env.bias_proba[c] > 0.5}
+        print(f"Number of constraints with probability > 0.5: {len(max_prob_constraints)}")            
 
         # We want at least one constraint to be violated to assure that each answer of the user
         # will lead to new information
@@ -143,7 +143,30 @@ class PQGenSolve(QGenBase):
         # so we need to return them to the original ones to continue if we don't find a solution next
         values = [x.value() for x in X]
 
-        # So a solution was found, try to find a better one now
+
+        ### Second solve with only the most probable constraints ###
+        if self.env.verbose > 2:
+            print("Solving without objective but with most probable constraints...")
+        
+        s += [c for c in max_prob_constraints.values()] # add the most probable constraints to the solver
+        s.solution_hint(X, values)
+
+        flag2 = s.solve(time_limit=(self.time_limit - t1), num_workers=8)
+        t2 = time.time() - t0
+        if flag2: # a solution was found with the most probable constraints
+            values = [x.value() for x in X]
+        else: # no solution was found with the most probable constraints, so we need to solve with the original constraints
+            m = cp.Model(Cl)
+            s = cp.SolverLookup.get("ortools", m)
+            restore_scope_values(X, values)
+
+        ### Third solve with objective ###
+        if self.time_limit - t2 <= 0:
+            return X
+            
+        if self.env.verbose > 2:
+            print("Solving with objective...")
+
         s.solution_hint(X, values)
         try:
             objective = obj_proba_solve(B=B, ca_env=self.env)
@@ -153,17 +176,15 @@ class PQGenSolve(QGenBase):
         # Run with the objective
         s.maximize(objective)
 
-        if self.env.verbose > 2:
-            print("Solving with objective...")
 
-        flag2 = s.solve(time_limit=(self.time_limit), num_workers=8)
+        flag3 = s.solve(time_limit=(self.time_limit - t2), num_workers=8)
 
-        print("flag2: ", flag2)
+        print("flag3: ", flag3)
         print("min proba: ", min(self.env.bias_proba[c] for c in B))
         print("max proba: ", max(self.env.bias_proba[c] for c in B))
         print("objective value: ", objective.value())
 
-        if flag2:
+        if flag3:
             return X
         else:
             restore_scope_values(X, values)
