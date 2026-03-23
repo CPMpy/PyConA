@@ -74,6 +74,9 @@ class CAEnv(ABC):
             print(f"removing the following constraints from bias: {C}")
 
         self.instance.bias = list(set(self.instance.bias) - set(C))
+        # Persist removed candidates so that if the bias is reconstructed later,
+        # previously-eliminated negative constraints do not re-enter and get re-labeled.
+        self.instance.excluded_cons = list(set(self.instance.excluded_cons).union(set(C)))
 
     def add_to_cl(self, C):
         """
@@ -91,6 +94,8 @@ class CAEnv(ABC):
         # Add constraint(s) c to the learned network and remove them from the bias
         self.instance.cl.extend(C)
         self.instance.bias = list(set(self.instance.bias) - set(C))
+        # Safety: if something ended up excluded but is now learned, ensure it is no longer excluded.
+        self.instance.excluded_cons = list(set(self.instance.excluded_cons) - set(C))
 
         self.metrics.cl += len(C)
         if self.verbose == 1:
