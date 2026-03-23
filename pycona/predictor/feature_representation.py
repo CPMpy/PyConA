@@ -162,7 +162,7 @@ class FeaturesRelDim(FeatureRepresentation):
                 features.append(dimj_diff)
             else:
                 features.append(True)
-                for _ in range(4):
+                for _ in range(3):
                     features.append(0)
                 features.append(0.0)
 

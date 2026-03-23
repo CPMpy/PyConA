@@ -68,6 +68,7 @@ class GenAcq(AlgorithmCAInteractive):
                 if self.env.verbose >= 1:
                     print(f"\nLearned {self.env.metrics.cl} constraints in "
                           f"{self.env.metrics.total_queries} queries.")
+                self.env.instance.bias = []
                 return self.env.instance
 
             self.env.metrics.increase_generation_time(gen_end - gen_start)
@@ -108,7 +109,7 @@ class GenAcq(AlgorithmCAInteractive):
         for var in scope_vars:
             var_types = []
             for type_group in self._types:
-                if var.name in type_group:
+                if var in type_group:
                     var_types.append(type_group)
             type_sequences.append(var_types)
 
@@ -139,6 +140,7 @@ class GenAcq(AlgorithmCAInteractive):
         all_type_sequences.sort(key=lambda seq: len(set().union(*seq)))
 
         while len(all_type_sequences) > 0 and gq_counter < self._qg_max:
+
             Y = all_type_sequences.pop(0)    
             
             # Instead of getting constraints from bias, generate them for this type sequence

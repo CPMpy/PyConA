@@ -31,12 +31,15 @@ def split_proba(Y, R, kappaB, P_c, **kwargs):
     if len(kappaB) > 10000:
         return split_half(Y)
     
+    time_limit = kwargs.get('time_limit', 1)
+
     hashY = [hash(y) for y in Y]
     hashR = [hash(r) for r in R]
 
     x = cp.boolvar(shape=(len(Y),))
 
     model = cp.Model()
+
 
     Y1_size = sum(x)
 
@@ -65,7 +68,7 @@ def split_proba(Y, R, kappaB, P_c, **kwargs):
     
     s.maximize(objective)
     
-    flag = s.solve(time_limit=1)
+    flag = s.solve(time_limit=time_limit)
 
     if not flag:
         restore_scope_values(x, values)
