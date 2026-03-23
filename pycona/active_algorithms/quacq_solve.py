@@ -21,8 +21,32 @@ class QuAcqSolve(AlgorithmCAInteractive):
 
         :param ca_env: An instance of ActiveCAEnv, default is None.
         """
-        env = ca_env if ca_env is not None else ProbaActiveCAEnv(qgen=PQGenSolve())
-        super().__init__(env)
+        if ca_env is not None:
+            ca_env.qgen = PQGenSolve()
+        else:
+            ca_env = ProbaActiveCAEnv(qgen=PQGenSolve())
+        super().__init__(ca_env)
+
+
+    @property
+    def env(self):
+        """
+        Get the constraint acquisition environment.
+
+        :return: The constraint acquisition environment.
+        """
+        return self._env
+
+    @env.setter
+    def env(self, env: ActiveCAEnv):
+        """
+        Set the constraint acquisition environment and assign this algorithm to it.
+
+        :param env: The constraint acquisition environment.
+        """
+        self._env = env
+        self._env.qgen = PQGenSolve()
+
 
     def learn(self, instance: ProblemInstance, oracle: Oracle = UserOracle(), verbose=0, X=None, metrics: Metrics = None):
         """
