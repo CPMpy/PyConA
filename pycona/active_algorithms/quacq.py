@@ -4,7 +4,7 @@ from .algorithm_core import AlgorithmCAInteractive
 from ..problem_instance import ProblemInstance
 from ..answering_queries import Oracle, UserOracle
 from ..ca_environment.active_ca import ActiveCAEnv
-from ..utils import get_kappa
+from ..utils import get_kappa, get_con_subset
 from .. import Metrics
 
 
@@ -32,6 +32,9 @@ class QuAcq(AlgorithmCAInteractive):
         :param X: The set of variables to consider, default is None.
         :return: the learned instance
         """
+        init_bias = list(self.env.instance.bias)
+        init_bias_provided = len(init_bias) > 0
+        
         if X is None:
             X = instance.X
         assert isinstance(X, list), "When using .learn(), set parameter X must be a list of variables. Instead got: {}".format(X)
@@ -53,6 +56,12 @@ class QuAcq(AlgorithmCAInteractive):
             gen_end = time.time()
 
             if len(Y) == 0:
+                
+                # Add implied constraints from bias to cl
+                implied_constraints = get_con_subset(self.env.instance.bias, Y)
+                self.env.instance.cl.extend(implied_constraints)
+                self.env.instance.bias = [c for c in self.env.instance.bias if c not in set(implied_constraints)] # remove implied constraints from bias
+
                 # if no query can be generated it means we have (prematurely) converged to the target network -----
                 self.env.metrics.finalize_statistics()
                 if self.env.verbose >= 1:

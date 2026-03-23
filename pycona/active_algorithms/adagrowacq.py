@@ -71,6 +71,8 @@ class AdaGrowAcq(AlgorithmCAInteractive):
         while len(Y) < n_vars:
             it += 1
 
+            print(f"Growacq iteration {it}, adding {v} variables")
+            
             Y_new = self.choose_variables(X, Y, v)
             if init_bias_provided:
                 visible_now = set(get_con_subset(init_bias, Y_new))
@@ -88,9 +90,9 @@ class AdaGrowAcq(AlgorithmCAInteractive):
             cl_size = len(self.env.instance.cl)
             self.env.instance = self.inner_algorithm.learn(self.env.instance, oracle, verbose=verbose, metrics=self.env.metrics, X=Y)
                         # Add implied constraints from bias to cl
-            implied_constraints = get_con_subset(self.env.instance.bias, Y)
-            self.env.instance.cl.extend(implied_constraints)
-            self.env.instance.bias = [c for c in self.env.instance.bias if c not in set(implied_constraints)] # remove implied constraints from bias
+            #implied_constraints = get_con_subset(self.env.instance.bias, Y)
+            #self.env.instance.cl.extend(implied_constraints)
+            #self.env.instance.bias = [c for c in self.env.instance.bias if c not in set(implied_constraints)] # remove implied constraints from bias
 
             self.env.metrics.print_statistics()
             if len(self.env.instance.cl) == cl_size:
