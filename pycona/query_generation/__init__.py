@@ -7,9 +7,11 @@ TQGen: Query generator from:
        Ait Addi, Hajar, et al. "Time-bounded query generator for constraint acquisition." CPAIOR, 2018
 PQGen: Query generator from:
        Dimos Tsouros, Senne Berden, and Tias Guns. "Guided Bottom-Up Interactive Constraint Acquisition." CP, 2023
+ConAcqQGen: Complete-query generator for ConAcq.2 (Bessiere et al., AIJ 2017).
 """
 
 from .qgen_core import QGenBase
 from .qgen import QGen
 from .tqgen import TQGen
 from .pqgen import PQGen
+from .conacq_qgen import ConAcqQGen

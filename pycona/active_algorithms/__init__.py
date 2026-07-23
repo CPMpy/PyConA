@@ -4,6 +4,7 @@ This module imports various active_algorithms for ICA implementations:
  - MQuAcq:
  - MQuAcq2:
  - GrowAcq:
+ - ConAcq2:
 """
 
 from .algorithm_core import AlgorithmCAInteractive
@@ -14,3 +15,4 @@ from .growacq import GrowAcq
 from .pquacq import PQuAcq
 from .mineacq import MineAcq
 from .genacq import GenAcq
+from .conacq2 import ConAcq2, VersionSpace
