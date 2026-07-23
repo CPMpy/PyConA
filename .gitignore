@@ -2,6 +2,7 @@
 *.xml
 *.iml
 .idea/
+.cursor/
 *.pyc
 pycona.egg-info/dependency_links.txt
 pycona.egg-info/PKG-INFO
