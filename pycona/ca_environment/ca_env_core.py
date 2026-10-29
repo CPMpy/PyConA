@@ -74,6 +74,7 @@ class CAEnv(ABC):
             print(f"removing the following constraints from bias: {C}")
 
         self.instance.bias = list(set(self.instance.bias) - set(C))
+        self.instance.excluded_cons = list(set(self.instance.excluded_cons).union(set(C)))
 
     def add_to_cl(self, C):
         """
@@ -88,11 +89,18 @@ class CAEnv(ABC):
         if self.verbose >= 3:
             print(f"adding the following constraints to C_L: {C}")
 
-        # Add constraint(s) c to the learned network and remove them from the bias
-        self.instance.cl.extend(C)
+        # Ignore constraints that are already learned, including duplicates in C.
+        seen = set(self.instance.cl)
+        new = []
+        for c in C:
+            if c not in seen:
+                new.append(c)
+                seen.add(c)
+
+        self.instance.cl.extend(new)
         self.instance.bias = list(set(self.instance.bias) - set(C))
 
-        self.metrics.cl += len(C)
+        self.metrics.cl += len(new)
         if self.verbose == 1:
-            for c in C:
+            for _ in new:
                 print("L", end="")
