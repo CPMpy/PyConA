@@ -35,6 +35,9 @@ class FindC(FindCBase):
 
         # Initialize delta
         delta = get_con_subset(self.ca.instance.bias, scope)
+        # The current example already satisfies these candidates, so they are not the
+        # violated constraint in this scope.
+        [self.ca.remove_from_bias(c) for c in delta if check_value(c) is True]
         delta = [c for c in delta if check_value(c) is False]
 
         if len(delta) == 1:

@@ -119,7 +119,7 @@ class MineAcq(AlgorithmCAInteractive):
             Y = T.pop()
             gen_flag = False
             B = [c for c in self.env.instance.bias if
-                 get_relation(c, self.env.instance.language) == r and frozenset(get_scope(c)).issubset(Y)]
+                 get_relation(c, self.env.instance.language) == r and frozenset(v.name for v in get_scope(c)).issubset(Y)]
 
             D = [tuple([v.name for v in get_scope(c)]) for c in B]  # missing edges that can be completed (exist in B)
 
