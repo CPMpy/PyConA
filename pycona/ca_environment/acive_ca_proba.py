@@ -236,6 +236,11 @@ class ProbaActiveCAEnv(ActiveCAEnv):
             C = [C]
         assert isinstance(C, list), "add_to_cl accepts as input a list of constraints or a constraint"
 
+        # Ignore constraints that are already learned, including duplicates in C,
+        # so that they are not added again to the dataset
+        learned = set(self.instance.cl)
+        C = [c for c in dict.fromkeys(C) if c not in learned]
+
         super().add_to_cl(C)
 
         # featurize constraints and add them to the dataset
