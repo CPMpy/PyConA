@@ -4,8 +4,13 @@ from ..answering_queries.constraint_oracle import ConstraintOracle
 from ..problem_instance import ProblemInstance, absvar
 
 
-def construct_gtsudoku(block_size_row=2, block_size_col=2, grid_size=4):
+def construct_gtsudoku(block_size_row=3, block_size_col=3, grid_size=9):
     """
+    :Description: A Greater-Than Sudoku. It combines the Sudoku constraints on rows, columns and blocks with a
+    fixed set of greater-than clues between neighboring cells of the 9x9 grid.
+    :param block_size_row: number of rows in each block
+    :param block_size_col: number of columns in each block
+    :param grid_size: size of the grid
     :return: a ProblemInstance object, along with a constraint-based oracle
     """
 
@@ -15,7 +20,42 @@ def construct_gtsudoku(block_size_row=2, block_size_col=2, grid_size=4):
     # Variables
     grid = cp.intvar(1, grid_size, shape=(grid_size, grid_size), name="grid")
 
-    model = cp.Model()
+    # Greater-than clues
+    model = cp.Model(
+        grid[0, 2] < grid[1, 2],
+        grid[0, 4] > grid[1, 4],
+        grid[0, 5] < grid[1, 5],
+        grid[0, 8] < grid[1, 8],
+
+        grid[1, 1] > grid[1, 2],
+        grid[1, 0] < grid[2, 0],
+        grid[1, 6] > grid[1, 7],
+        grid[1, 8] < grid[2, 8],
+
+        grid[2, 4] < grid[2, 5],
+
+        grid[3, 0] < grid[3, 1],
+        grid[3, 6] < grid[3, 7],
+        grid[3, 7] < grid[3, 8],
+        grid[3, 2] < grid[4, 2],
+        grid[3, 7] > grid[4, 7],
+        grid[3, 8] < grid[4, 8],
+
+        grid[4, 1] > grid[5, 1],
+        grid[4, 2] < grid[5, 2],
+        grid[4, 4] < grid[5, 4],
+        grid[4, 5] < grid[5, 5],
+        grid[4, 8] < grid[5, 8],
+
+        grid[6, 5] < grid[6, 6],
+
+        grid[7, 1] > grid[8, 1],
+        grid[7, 3] > grid[7, 4],
+        grid[7, 5] > grid[8, 5],
+        grid[7, 6] > grid[8, 6],
+
+        grid[8, 2] > grid[8, 3],
+    )
 
     # Constraints on rows and columns
     for row in grid:
@@ -29,31 +69,6 @@ def construct_gtsudoku(block_size_row=2, block_size_col=2, grid_size=4):
         for j in range(0, grid_size, block_size_col):
             model += cp.AllDifferent(grid[i:i + block_size_row, j:j + block_size_col]).decompose()  # python's indexing
 
-    true_horizontal_gt = [
-        (0, 0, 0, 1),  
-        (1, 1, 1, 2),  
-        (2, 2, 2, 3),  
-        (3, 3, 3, 4),  
-        (4, 4, 4, 5),  
-    ]
-    
-    for r1, c1, r2, c2 in true_horizontal_gt:
-        if r2 < grid_size and c2 < grid_size:
-            model += (grid[r1, c1] > grid[r2, c2])
-            
-    true_vertical_gt = [
-        (0, 2, 1, 2),  
-        (1, 3, 2, 3),  
-        (2, 4, 3, 4),  
-        (3, 5, 4, 5),  
-        (4, 6, 5, 6),  
-    ]
-    
-    for r1, c1, r2, c2 in true_vertical_gt:
-        if r1 < grid_size and r2 < grid_size and c1 < grid_size and c2 < grid_size:
-            model += (grid[r1, c1] > grid[r2, c2])
-
-
     C_T = list(set(toplevel_list(model.constraints)))
 
     # Create the language:
@@ -62,7 +77,7 @@ def construct_gtsudoku(block_size_row=2, block_size_col=2, grid_size=4):
     # create abstract relations using the abstract vars
     lang = [AV[0] == AV[1], AV[0] != AV[1], AV[0] < AV[1], AV[0] > AV[1], AV[0] >= AV[1], AV[0] <= AV[1]]
 
-    instance = ProblemInstance(variables=grid, params=parameters, language=lang, name=f"sudoku_{block_size_row}_{block_size_col}_{grid_size}")
+    instance = ProblemInstance(variables=grid, params=parameters, language=lang, name="gt_sudoku")
 
     oracle = ConstraintOracle(C_T)
 
