@@ -214,6 +214,7 @@ class ActiveCAEnv(CAEnv):
         # For the evaluation metrics
         if self.metrics:
             self.metrics.increase_generalization_queries_count()
+            self.metrics.log_generalization_query(C, answer)
             self.metrics.asked_query()
 
         return answer
