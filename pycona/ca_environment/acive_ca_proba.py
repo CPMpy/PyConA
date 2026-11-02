@@ -249,8 +249,9 @@ class ProbaActiveCAEnv(ActiveCAEnv):
 
     def _predict_bias_proba(self):
         """ Predict the probabilities of candidate constraints using the trained classifier """
-        if self._classifier_trained:
-            featuresB = {c: self.feature_representation.featurize_constraint(c) for c in self.instance.bias}
-            self.bias_proba = {c: self.classifier.predict_proba([featuresB[c]])[0][1]+0.01 for c in self.instance.bias}
+        if self._classifier_trained and len(self.instance.bias) > 0:
+            featuresB = self.feature_representation.featurize_constraints(self.instance.bias)
+            probas = self.classifier.predict_proba(featuresB)
+            self.bias_proba = {c: proba[1] + 0.01 for c, proba in zip(self.instance.bias, probas)}
         else:
             self.bias_proba = {c: 0.01 for c in self.instance.bias}
