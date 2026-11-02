@@ -40,6 +40,7 @@ class Metrics:
         self.positive_recommendation_queries = 0
         self.generalization_queries_count = 0
         self.positive_generalization_queries = 0
+        self.generalization_queries = []  # list of (query, answer) pairs
 
         # Query progress per constraint learned statistics
         self.cl_progress = []
@@ -137,6 +138,17 @@ class Metrics:
         """
         self.generalization_queries_count += amount
         self.total_queries += amount
+
+    def log_generalization_query(self, query, answer):
+        """
+        Store a generalization query along with its answer.
+
+        :param query: The generalization query, e.g., the list of constraints it asks about.
+        :param answer: The answer to the generalization query (True/False).
+        """
+        self.generalization_queries.append((query, answer))
+        if answer:
+            self.positive_generalization_queries += 1
 
     def store_queries_progress(self):
         """
