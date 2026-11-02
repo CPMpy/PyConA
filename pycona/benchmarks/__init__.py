@@ -9,3 +9,5 @@ from .nqueens import construct_nqueens_problem
 from .golomb import construct_golomb
 from .latin_squares import construct_latin_squares
 from .greater_than_sudoku import construct_gtsudoku
+from .purdey import construct_purdey_problem
+from .grid_coloring import construct_grid_coloring
